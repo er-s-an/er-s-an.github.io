@@ -12,3 +12,5 @@ Original brand assets identify the relevant employer, venture, platform or compe
 - **Red Star News:** official article presentation assets from `https://appstatic.cdsb.com/20191226-hx-logo.png` and `https://cdsbwwwqiniu.cdsb.com/20190223-hongxingholder.png`, linked by the official `static.cdsb.com` article template. Used for the completed internship.
 
 The hero carousel uses distance fields generated from the original marks for an animated chrome material and continuous melt transitions. Encoded fields in `assets/metal/` are derived display assets, not new brand artwork. These are artistic treatments within a personal portfolio, not replacement brand assets. Each chapter states its relationship to Caesar. Caesar's signature is original generated artwork.
+
+Section colors: Tencent blue `#0052D9` is read from the official blue logo PNG. Red Star News red `#CE261D` is sampled from the lower red area of its official gradient app icon. AdventureX orange `#F48529` comes from `--color-accent` in the [official Playbook color tokens](https://github.com/AdventureX-RGE/Playbook/blob/main/styles/tokens.css), checked 2026-10-22.
