@@ -10,7 +10,7 @@ async function createLiquidMetal(canvas, sources, width = 600, height = 400, onL
   const resize = new ResizeObserver(entries => {
     const { width: w, height: h } = entries[0].contentRect;
     if (!w || !h) return;
-    const ratio = Math.min(devicePixelRatio || 1, 1.5);
+    const ratio = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(1_000_000 / (w * h)));
     canvas.width = Math.max(1, Math.round(w * ratio));
     canvas.height = Math.max(1, Math.round(h * ratio));
     repaint();
@@ -33,7 +33,7 @@ async function createLiquidMetal(canvas, sources, width = 600, height = 400, onL
       precision highp float;
       uniform sampler2D fromLogo, toLogo;
       uniform vec2 resolution, shape;
-      uniform float progress, time;
+      uniform float progress, time, introWidth;
       out vec4 color;
       float smoothUnion(float a, float b, float k) {
         float h = clamp(.5 + .5 * (b - a) / k, 0., 1.);
@@ -42,9 +42,19 @@ async function createLiquidMetal(canvas, sources, width = 600, height = 400, onL
       float logo(sampler2D image, vec2 p, float smoothing) {
         vec2 uv = p / vec2(shape.x / shape.y, 1.) + .5;
         vec2 field = texture(image, uv).rg;
-        return mix(field.r, field.g, smoothing);
+        vec2 edge = abs(p) - vec2(shape.x / shape.y, 1.) * .5;
+        return max(mix(field.r, field.g, smoothing), max(edge.x, edge.y));
+      }
+      float sheet(vec2 p) {
+        float viewHeight = resolution.y / (introWidth * shape.y / shape.x);
+        vec2 v = p / viewHeight;
+        float wave = .05 * sin(v.x * 13. + time * 2.) + .025 * sin(v.x * 29. - time * 2.6);
+        float front = mix(-.72, .82, smoothstep(0., 1., progress));
+        front += wave * max(0., sin(progress * 3.14159265));
+        return (front - v.y) * viewHeight;
       }
       float surface(vec2 p, float smoothing) {
+        if (introWidth > 0.) return smoothUnion(logo(fromLogo, p, smoothing), sheet(p), max(.002, .045 * (1. - progress)));
         if (progress <= 0.) return logo(fromLogo, p, smoothing);
         if (progress >= 1.) return logo(toLogo, p, smoothing);
         float flow = max(0., sin(progress * 3.14159265));
@@ -68,7 +78,7 @@ async function createLiquidMetal(canvas, sources, width = 600, height = 400, onL
         return d;
       }
       void main() {
-        float fit = min(resolution.x / shape.x, resolution.y / shape.y);
+        float fit = introWidth > 0. ? introWidth / shape.x : min(resolution.x / shape.x, resolution.y / shape.y);
         vec2 p = (gl_FragCoord.xy - resolution * .5) / (fit * shape.y);
         p.y *= -1.;
         float d = surface(p, 0.);
@@ -78,12 +88,20 @@ async function createLiquidMetal(canvas, sources, width = 600, height = 400, onL
         float e = .004;
         vec2 grad = vec2(surface(p + vec2(e, 0.), 1.) - surface(p - vec2(e, 0.), 1.), surface(p + vec2(0., e), 1.) - surface(p - vec2(0., e), 1.)) / (2. * e);
         float depth = max(-d, 0.);
-        float fluid = pow(max(0., sin(progress * 3.14159265)), 4.);
+        float fluid = introWidth > 0. ? 1. - progress : pow(max(0., sin(progress * 3.14159265)), 4.);
         vec3 normal = normalize(vec3(grad * 1.7 * exp(-depth / mix(.0045, .09, fluid)), 1.));
         normal.xy += vec2(sin(p.y * 9. + time * .4), cos(p.x * 11. - time * .3)) * .10;
+        if (introWidth > 0.) {
+          vec2 v = (gl_FragCoord.xy - resolution * .5) / resolution.y;
+          vec2 q = v * 3.;
+          q += .7 * vec2(sin(q.y * 1.6 - time * .8), cos(q.x * 1.4 + time * .6));
+          float folds = sin(q.x * 2.5 + q.y - time * 1.9) + .6 * sin(q.y * 3.8 - q.x * 1.2 + time * 1.5) + .35 * cos(q.x * 5. + q.y * 4. - time * 2.5);
+          normal.xy += vec2(dFdx(folds), -dFdy(folds)) * resolution.y * .12 * (1. - smoothstep(-.04, .06, sheet(p)));
+        } else normal.xy += vec2(sin(time * .75), cos(time * .6)) * .22;
         normal = normalize(normal);
         vec3 reflection = reflect(vec3(0., 0., -1.), normal);
-        float band = .5 + .5 * sin(reflection.y * mix(2.8, 5.4, fluid) + reflection.x * mix(.8, 1.6, fluid) + p.y * 8. + time * .32);
+        float latitude = introWidth > 0. ? p.y * fit * shape.y / resolution.y * 1.4 : p.y * 8.;
+        float band = .5 + .5 * sin(reflection.y * mix(2.8, 5.4, fluid) + reflection.x * mix(.8, 1.6, fluid) + latitude + time * .32);
         vec3 metal = mix(vec3(.055, .085, .15), vec3(.83, .89, .99), smoothstep(.12, .7, band));
         float strip = pow(max(0., cos(reflection.y * 4.2 + reflection.x * .6 + time * .12)), 28.);
         metal += strip * .65;
@@ -137,14 +155,14 @@ async function createLiquidMetal(canvas, sources, width = 600, height = 400, onL
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RG16F, raster.width, raster.height / 2, 0, gl.RG, gl.FLOAT, field);
     });
-    const uniforms = Object.fromEntries(['fromLogo', 'toLogo', 'resolution', 'shape', 'progress', 'time'].map(key => [key, gl.getUniformLocation(program, key)]));
+    const uniforms = Object.fromEntries(['fromLogo', 'toLogo', 'resolution', 'shape', 'progress', 'time', 'introWidth'].map(key => [key, gl.getUniformLocation(program, key)]));
     resize.observe(canvas);
     let lastFrame;
     const renderer = {
       destroy,
-      draw(from, to, progress, time) {
+      draw(from, to, progress, time, introWidth = 0) {
         if (disposed) return;
-        lastFrame = [from, to, progress, time];
+        lastFrame = [from, to, progress, time, introWidth];
         gl.viewport(0, 0, canvas.width, canvas.height);
         gl.useProgram(program);
         [from, to].forEach((index, unit) => {
@@ -157,6 +175,7 @@ async function createLiquidMetal(canvas, sources, width = 600, height = 400, onL
         gl.uniform2f(uniforms.shape, width, height);
         gl.uniform1f(uniforms.progress, progress);
         gl.uniform1f(uniforms.time, time);
+        gl.uniform1f(uniforms.introWidth, introWidth * canvas.width / (canvas.clientWidth || canvas.width));
         gl.drawArrays(gl.TRIANGLES, 0, 6);
       }
     };

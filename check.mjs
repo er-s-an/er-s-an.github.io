@@ -43,7 +43,7 @@ test('distance fields preserve logo edges and reject empty masks', () => {
   assert.throws(() => distanceField(new Uint8Array(81), 9, 9), /Empty/);
 });
 
-function setup({ reduced = false, hash = '#work', gpu = true } = {}) {
+function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0 } = {}) {
   let now = 0, nextId = 1;
   const jobs = new Map();
   const schedule = (fn, delay, frame = false) => { const id = nextId++; jobs.set(id, { at: now + delay, fn, frame }); return id; };
@@ -62,6 +62,7 @@ function setup({ reduced = false, hash = '#work', gpu = true } = {}) {
   button.querySelector = q => q === '.motion-label' ? label : symbol;
   const intro = element(), logo = element(), veil = element(), introCanvas = element(), brandCanvas = element(), stage = element(), caption = element();
   const signature = element();
+  signature.decode = () => Promise.resolve();
   signature.setAttribute('src', 'signature.webp');
   logo.querySelector = () => signature;
   const monogram = element();
@@ -79,7 +80,7 @@ function setup({ reduced = false, hash = '#work', gpu = true } = {}) {
   const many = { '.brand-slide': slides, '.brand-controls button': buttons, '[data-scroll-scene]': scenes };
   const media = { matches: reduced, addEventListener(_, fn) { this.change = fn; } };
   const window = { listeners: {}, addEventListener(k, fn) { this.listeners[k] = fn; } };
-  const document = { hidden: false, activeElement: null, listeners: {}, documentElement: root, querySelector: q => one[q], querySelectorAll: q => many[q] || [], addEventListener(k, fn) { this.listeners[k] = fn; } };
+  const document = { fonts: { ready: assetsDelay ? new Promise(resolve => schedule(resolve, assetsDelay)) : Promise.resolve() }, hidden: false, activeElement: null, listeners: {}, documentElement: root, querySelector: q => one[q], querySelectorAll: q => many[q] || [], addEventListener(k, fn) { this.listeners[k] = fn; } };
   const renderers = [];
   const createLiquidMetal = async (canvas, sources, width, height, onLoss) => {
     if (!gpu) throw new Error('WebGL unavailable');
@@ -135,18 +136,47 @@ test('reduced motion skips intro and autoplay, but manual brand selection works'
   assert.equal(s.root.classList.contains('motion-paused'), true);
 });
 
-test('liquid intro forms a signature, docks to the measured header, and clears within two seconds', async () => {
+test('full-screen metal drains to a signature, docks to the measured header, and clears within two seconds', async () => {
   const s = setup({ hash: '#top' });
+  await s.advance(100);
+  assert.equal(s.intro.dataset.phase, 'loading');
+  assert.ok(s.renderers[1].calls.some(([, , p, , width]) => p === 0 && width === 700));
   await s.advance(650);
   assert.equal(s.intro.hidden, false);
   assert.equal(s.root.classList.contains('intro-active'), true);
   assert.ok(s.renderers[1].calls.some(([, , p]) => p > .5 && p < 1));
-  await s.advance(800);
-  assert.equal(s.logo.animation.options.duration, 500);
+  await s.advance(650);
+  assert.equal(s.logo.animation.options.duration, 400);
   assert.ok(s.logo.animation.frames[1].transform.includes('scale(0.20714285714285716)'));
   await s.advance(500);
   assert.equal(s.intro.hidden, true);
   assert.equal(s.root.classList.contains('intro-active'), false);
+});
+
+test('intro waits for first-screen assets and slow loading has a bounded exit', async () => {
+  const delayed = setup({ hash: '', assetsDelay: 500 });
+  await delayed.advance(400);
+  assert.equal(delayed.intro.dataset.phase, 'loading');
+  await delayed.advance(150);
+  assert.equal(delayed.intro.dataset.phase, 'draining');
+  const slow = setup({ hash: '', assetsDelay: 10000 });
+  await slow.advance(650);
+  assert.equal(slow.intro.dataset.phase, 'loading');
+  await slow.advance(2200);
+  assert.equal(slow.intro.hidden, true);
+});
+
+test('manual morph reaches its final mark in under 1.2 seconds and idle lighting keeps moving', async () => {
+  const s = setup();
+  await s.advance(30);
+  s.buttons[1].listeners.click();
+  await s.advance(1200);
+  const renderer = s.renderers[0];
+  assert.equal(s.role.textContent, 'AI Agent Engineering Intern');
+  assert.ok(renderer.calls.some(([, to, p]) => to === 1 && p === 1));
+  const time = renderer.calls.at(-1)[3];
+  await s.advance(200);
+  assert.ok(renderer.calls.at(-1)[3] > time);
 });
 
 test('rapid choices keep a continuous surface and end on the latest destination', async () => {

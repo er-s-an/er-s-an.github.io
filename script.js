@@ -5,7 +5,6 @@ const intro = document.querySelector('.brand-intro');
 const introLogo = document.querySelector('.intro-logo');
 const introVeil = document.querySelector('.intro-veil');
 const introCanvas = document.querySelector('.intro-liquid');
-const introCaption = document.querySelector('.intro-caption');
 const heroArt = document.querySelector('.hero-art');
 const brandStage = document.querySelector('.brand-stage');
 const brandCanvas = document.querySelector('.brand-liquid');
@@ -38,6 +37,7 @@ let heroVisible = true;
 let interacting = false;
 const stopped = () => paused || reducedMotion.matches;
 const clamp = value => Math.max(0, Math.min(1, value));
+const morphDuration = 1.15;
 
 function finishIntro(reason) {
   intro.dataset.endReason = reason?.type || (typeof reason === 'string' ? reason : 'complete');
@@ -82,7 +82,7 @@ function drawMetal(now) {
   metalTime += delta;
   if (morph) {
     morph.elapsed += delta;
-    const p = clamp(morph.elapsed / 1.6);
+    const p = clamp(morph.elapsed / morphDuration);
     metal.draw(morph.from, morph.to, p, metalTime);
     if (p >= .5 && currentBrand !== morph.to) selectBrand(morph.to);
     if (p === 1) {
@@ -104,7 +104,7 @@ function showBrand(index) {
   clearTimeout(rotationTimer);
   if (morph && !stopped()) {
     // Until the pool reforms, a new destination can share the same flowing surface.
-    if (morph.elapsed < .8) morph.to = index;
+    if (morph.elapsed < morphDuration / 2) morph.to = index;
     else pendingBrand = index;
     return;
   }
@@ -176,40 +176,50 @@ function syncMotion() {
 
 async function startIntro() {
   if (stopped() || scrollY > 100 || (location.hash && location.hash !== '#top')) { finishIntro(); return; }
+  intro.hidden = false;
+  intro.dataset.phase = 'loading';
+  root.classList.add('intro-active');
+  const signature = introLogo.querySelector('img');
+  signature.style.opacity = '0';
+  introTimeout = setTimeout(() => finishIntro('timeout'), 2800);
   try {
+    let pageReady = false;
+    Promise.all([document.fonts.ready, signature.decode()]).then(() => { pageReady = true; }, () => { pageReady = true; });
     const ready = createLiquidMetal(introCanvas, ['assets/metal/caesar.png'], 1400, 445, finishIntro).then(renderer => {
       if (introDone) renderer.destroy();
       else introMetal = renderer;
     });
     await Promise.race([ready, new Promise(resolve => setTimeout(resolve, 700))]);
     if (introDone || stopped() || !introMetal) { finishIntro(); return; }
-    intro.hidden = false;
-    root.classList.add('intro-active');
-    introLogo.querySelector('img').style.opacity = '0';
-    introTimeout = setTimeout(finishIntro, 2300);
+    const signatureWidth = introLogo.getBoundingClientRect().width;
     const started = performance.now();
+    let drainingAt;
     const flow = now => {
       const elapsed = now - started;
-      const p = clamp((elapsed - 100) / 1100);
-      introMetal.draw(0, 0, .5 + p * .5, elapsed / 1000);
-      const finish = clamp((elapsed - 1150) / 200);
-      introLogo.querySelector('img').style.opacity = String(finish);
+      if (drainingAt === undefined && ((pageReady && !initializingMetal && elapsed >= 220) || elapsed >= 700)) {
+        drainingAt = now;
+        intro.dataset.phase = 'draining';
+      }
+      const draining = drainingAt === undefined ? 0 : now - drainingAt;
+      introMetal.draw(0, 0, clamp(draining / 900), elapsed / 1000, signatureWidth);
+      introVeil.style.opacity = '0';
+      const finish = clamp((draining - 900) / 120);
+      signature.style.opacity = String(finish);
       introCanvas.style.opacity = String(1 - finish);
-      introCaption.style.opacity = String(1 - clamp((elapsed - 950) / 350));
-      introVeil.style.opacity = String(1 - clamp((elapsed - 1100) / 800));
-      if (elapsed < 1400) introFrame = requestAnimationFrame(flow);
+      if (draining >= 900) intro.dataset.phase = 'signature';
+      if (draining < 1080) introFrame = requestAnimationFrame(flow);
       else {
+        intro.dataset.phase = 'docking';
         const target = document.querySelector('.monogram').getBoundingClientRect();
         const origin = introLogo.getBoundingClientRect();
         const dx = target.left + target.width / 2 - origin.left - origin.width / 2;
         const dy = target.top + target.height / 2 - origin.top - origin.height / 2;
         const scale = target.width / origin.width;
         introMetal.destroy();
-        introVeil.animate([{ opacity: introVeil.style.opacity }, { opacity: 0 }], { duration: 500, fill: 'forwards' });
         dockAnimation = introLogo.animate([
           { transform: 'translate3d(0,0,0) scale(1)' },
           { transform: `translate3d(${dx}px,${dy}px,0) scale(${scale})` }
-        ], { duration: 500, easing: 'cubic-bezier(.65,0,.22,1)', fill: 'forwards' });
+        ], { duration: 400, easing: 'cubic-bezier(.65,0,.22,1)', fill: 'forwards' });
         dockAnimation.finished.then(finishIntro, finishIntro);
       }
     };
@@ -228,10 +238,11 @@ heroArt.addEventListener('pointerleave', () => { interacting = heroArt.contains(
 heroArt.addEventListener('focusin', () => { interacting = true; scheduleRotation(); });
 heroArt.addEventListener('focusout', event => { interacting = heroArt.contains(event.relatedTarget); scheduleRotation(); });
 window.addEventListener('scroll', queueScroll, { passive: true });
-window.addEventListener('resize', () => { if (dockAnimation) finishIntro('resize'); queueScroll(); }, { passive: true });
+window.addEventListener('resize', () => { if (!intro.hidden) finishIntro('resize'); queueScroll(); }, { passive: true });
 // An intro is decoration: any attempt to use the page dismisses it immediately.
 ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(type => window.addEventListener(type, finishIntro, { once: true, passive: true }));
 document.addEventListener('visibilitychange', () => {
+  root.classList.toggle('page-hidden', document.hidden);
   if (document.hidden) { finishIntro(); settleMorph(); previousFrame = undefined; }
   scheduleRotation(); queueMetal();
 });
@@ -251,6 +262,7 @@ if ('IntersectionObserver' in window) {
   document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
   const heroObserver = new IntersectionObserver(entries => {
     heroVisible = entries[0].isIntersecting;
+    heroArt.classList.toggle('art-offscreen', !heroVisible);
     if (!heroVisible) { settleMorph(); previousFrame = undefined; }
     scheduleRotation();
     queueMetal();
