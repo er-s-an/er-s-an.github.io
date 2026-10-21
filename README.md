@@ -20,6 +20,10 @@ node --test check.mjs
 
 Content lives in `index.html`. The continuous silhouette and reflective shading use native WebGL2 in `liquid-metal.js`, with the original SVG logos as a fallback. Motion lives in `script.js`: a dismissible intro, manually selectable brand carousel, staggered section reveals and scroll-linked glass reflections. System reduced motion skips the intro and autoplay; the global pause control stops all decorative motion. Scrolling never gets intercepted. Content remains readable without JavaScript. All internships are completed; uncertain end months are not invented. The CV is the public version, without private contact details. Brand source attribution is in `assets/brands/SOURCES.md`.
 
+## Languages
+
+The header switches between English and Simplified Chinese. The first visit follows the browser language; the selection is saved locally. `?lang=en` and `?lang=zh` override the saved preference and can be shared with section anchors. Switching preserves the visible section, selected brand and motion setting. English copy lives in the HTML; Chinese copy and the small language controller live in `i18n.js`. Navigation, metadata, accessible labels and live carousel captions change together. The linked public CV remains an English PDF.
+
 ## Metal assets
 
 `assets/metal/` contains precomputed distance fields, keeping distance calculations off the loading path. To regenerate after changing a source logo, run `node prepare-metal.mjs` in an environment with Sharp available. Sharp is an offline authoring tool; the website has no package or CDN dependencies. The renderer caps pixel density and total pixels, stops outside the viewport or in background tabs, and falls back to the original marks if WebGL is unavailable.

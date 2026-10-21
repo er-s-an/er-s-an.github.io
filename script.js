@@ -60,7 +60,8 @@ function selectBrand(index) {
   currentBrand = index;
   slides.forEach((slide, i) => { slide.hidden = i !== index; });
   brandButtons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
-  const [name, role, note] = brands[slides[index].dataset.brand];
+  const brand = slides[index].dataset.brand;
+  const [name, role, note] = brands[brand].map((text, i) => translate(`brand.${brand}.${['name', 'role', 'note'][i]}`, text));
   document.querySelector('#brand-name').textContent = name;
   document.querySelector('#brand-role').textContent = role;
   document.querySelector('#brand-note').textContent = note;
@@ -155,10 +156,10 @@ function syncMotion() {
   const off = stopped();
   root.classList.toggle('motion-paused', off);
   motionButton.setAttribute('aria-pressed', String(off));
-  motionButton.setAttribute('aria-label', off ? 'Resume animations' : 'Pause animations');
-  motionButton.title = reducedMotion.matches ? 'Reduced motion follows your system setting' : motionButton.getAttribute('aria-label');
+  motionButton.setAttribute('aria-label', off ? translate('motion.resume', 'Resume animations') : translate('motion.pause', 'Pause animations'));
+  motionButton.title = reducedMotion.matches ? translate('motion.reduced', 'Reduced motion follows your system setting') : motionButton.getAttribute('aria-label');
   motionButton.disabled = reducedMotion.matches;
-  motionButton.querySelector('.motion-label').textContent = off ? 'MOTION OFF' : 'MOTION ON';
+  motionButton.querySelector('.motion-label').textContent = off ? translate('motion.off', 'MOTION OFF') : translate('motion.on', 'MOTION ON');
   motionButton.querySelector('.motion-symbol').textContent = off ? '▷' : 'Ⅱ';
   if (off) {
     finishIntro();
@@ -228,8 +229,10 @@ async function startIntro() {
 }
 
 motionButton.hidden = false;
+selectBrand(currentBrand);
 syncMotion();
 startIntro();
+document.addEventListener('languagechange', () => { selectBrand(currentBrand); syncMotion(); });
 motionButton.addEventListener('click', () => { paused = !paused; syncMotion(); });
 reducedMotion.addEventListener('change', syncMotion);
 brandButtons.forEach((button, index) => button.addEventListener('click', () => showBrand(index)));

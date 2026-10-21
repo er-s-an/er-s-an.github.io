@@ -6,6 +6,7 @@ import { runInNewContext } from 'node:vm';
 const html = readFileSync(new URL('index.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('style.css', import.meta.url), 'utf8');
 const script = readFileSync(new URL('script.js', import.meta.url), 'utf8');
+const localization = readFileSync(new URL('i18n.js', import.meta.url), 'utf8');
 import { liquidDistanceField } from './prepare-metal.mjs';
 
 test('public content, anchors, local assets and brand credits are complete', () => {
@@ -43,7 +44,7 @@ test('distance fields preserve logo edges and reject empty masks', () => {
   assert.throws(() => distanceField(new Uint8Array(81), 9, 9), /Empty/);
 });
 
-function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0 } = {}) {
+function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0, savedLanguage, browserLanguage = 'en-US', query = '', storageBlocked = false } = {}) {
   let now = 0, nextId = 1;
   const jobs = new Map();
   const schedule = (fn, delay, frame = false) => { const id = nextId++; jobs.set(id, { at: now + delay, fn, frame }); return id; };
@@ -59,6 +60,7 @@ function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0 } 
     };
   };
   const root = element(), button = element(), label = element(), symbol = element();
+  root.lang = 'en';
   button.querySelector = q => q === '.motion-label' ? label : symbol;
   const intro = element(), logo = element(), veil = element(), introCanvas = element(), brandCanvas = element(), stage = element(), caption = element();
   const signature = element();
@@ -78,9 +80,21 @@ function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0 } 
   const one = { '.motion-button': button, '.brand-intro': intro, '.intro-logo': logo, '.intro-veil': veil, '.intro-liquid': introCanvas, '.brand-stage': stage, '.brand-liquid': brandCanvas, '.intro-caption': caption, '.hero-art': hero, '.monogram': monogram, '#brand-name': name, '#brand-role': role, '#brand-note': note };
   names.forEach(brand => { one[`#brand-${brand} image`] = element(); });
   const many = { '.brand-slide': slides, '.brand-controls button': buttons, '[data-scroll-scene]': scenes };
+  const languageButtons = ['en', 'zh'].map(language => element({ language }));
+  many['[data-language]'] = languageButtons;
+  const localizedText = [...html.matchAll(/<([a-z0-9]+)\b[^>]*data-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g)].map(([, , key, english]) => {
+    const node = element(); node.setAttribute('data-i18n', key); node.innerHTML = english; return node;
+  });
+  many['[data-i18n]'] = localizedText;
+  for (const [marker, attribute] of [['data-i18n-aria', 'aria-label'], ['data-i18n-content', 'content']]) {
+    many[`[${marker}]`] = [...html.matchAll(new RegExp(`<[^>]*${marker}="([^"]+)"[^>]*>`, 'g'))].map(([tag, key]) => {
+      const node = element(); node.setAttribute(marker, key); node.setAttribute(attribute, tag.match(new RegExp(`${attribute}="([^"]*)"`))[1]); return node;
+    });
+  }
+  one['.language-switch'] = element();
   const media = { matches: reduced, addEventListener(_, fn) { this.change = fn; } };
   const window = { listeners: {}, addEventListener(k, fn) { this.listeners[k] = fn; } };
-  const document = { fonts: { ready: assetsDelay ? new Promise(resolve => schedule(resolve, assetsDelay)) : Promise.resolve() }, hidden: false, activeElement: null, listeners: {}, documentElement: root, querySelector: q => one[q], querySelectorAll: q => many[q] || [], addEventListener(k, fn) { this.listeners[k] = fn; } };
+  const document = { fonts: { ready: assetsDelay ? new Promise(resolve => schedule(resolve, assetsDelay)) : Promise.resolve() }, hidden: false, activeElement: null, listeners: {}, documentElement: root, querySelector: q => one[q], querySelectorAll: q => many[q] || [], addEventListener(k, fn) { this.listeners[k] = fn; }, dispatchEvent(event) { this.listeners[event.type]?.(event); } };
   const renderers = [];
   const createLiquidMetal = async (canvas, sources, width, height, onLoss) => {
     if (!gpu) throw new Error('WebGL unavailable');
@@ -88,7 +102,11 @@ function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0 } 
     renderers.push(renderer);
     return renderer;
   };
-  runInNewContext(script, { document, window, createLiquidMetal, matchMedia: () => media, location: { hash }, scrollY: 0, innerHeight: 900, performance: { now: () => now }, setTimeout: (fn, delay) => schedule(fn, delay), clearTimeout: id => jobs.delete(id), requestAnimationFrame: fn => schedule(fn, 16, true), cancelAnimationFrame: id => jobs.delete(id) });
+  const location = { hash, href: `https://er-s-an.github.io/${query}${hash}` };
+  const storage = new Map(savedLanguage ? [['caesar-language', savedLanguage]] : []);
+  const localStorage = { getItem(key) { if (storageBlocked) throw new Error('Storage blocked'); return storage.get(key); }, setItem(key, value) { if (storageBlocked) throw new Error('Storage blocked'); storage.set(key, value); } };
+  const history = { state: null, replaceState(_, __, url) { location.href = String(url); location.hash = url.hash; } };
+  runInNewContext(localization + '\n' + script, { document, window, createLiquidMetal, localStorage, history, URL, Event, navigator: { language: browserLanguage }, matchMedia: () => media, location, scrollY: 0, innerHeight: 900, performance: { now: () => now }, setTimeout: (fn, delay) => schedule(fn, delay), clearTimeout: id => jobs.delete(id), requestAnimationFrame: fn => schedule(fn, 16, true), cancelAnimationFrame: id => jobs.delete(id) });
   async function advance(ms) {
     await new Promise(resolve => setImmediate(resolve));
     const end = now + ms;
@@ -102,8 +120,56 @@ function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0 } 
     now = end;
     await Promise.resolve();
   }
-  return { root, button, label, media, intro, logo, slides, buttons, name, role, stage, scenes, window, document, renderers, advance };
+  return { root, button, label, media, intro, logo, slides, buttons, name, role, stage, scenes, window, document, renderers, advance, languageButtons, localizedText, storage, location };
 }
+
+test('Chinese covers every marked field and English restores the original markup', async () => {
+  const s = setup();
+  const originals = s.localizedText.map(node => node.innerHTML);
+  assert.equal(originals.length, (html.match(/data-i18n="/g) || []).length);
+  s.languageButtons[1].listeners.click();
+  assert.equal(s.root.lang, 'zh-Hans');
+  const copy = JSON.parse(localization.slice(localization.indexOf('{'), localization.indexOf('\n};') + 2));
+  for (const key of html.matchAll(/data-i18n(?:-aria|-content)?="([^"]+)"/g)) assert.equal(typeof copy[key[1]], 'string', key[1]);
+  assert.match(s.localizedText.find(node => node.getAttribute('data-i18n') === 'hero.intro').innerHTML, /https:\/\/makebook.xyz/);
+  assert.equal(s.role.textContent, 'CTO / 产品与工程');
+  assert.equal(s.storage.get('caesar-language'), 'zh');
+  assert.equal(new URL(s.location.href).hash, '#work');
+  s.languageButtons[0].listeners.click();
+  assert.equal(s.root.lang, 'en');
+  assert.deepEqual(s.localizedText.map(node => node.innerHTML), originals);
+});
+
+test('language URLs override saved preferences; Chinese browsers have a sensible first visit', () => {
+  assert.equal(setup({ browserLanguage: 'zh-HK' }).root.lang, 'zh-Hans');
+  assert.equal(setup({ savedLanguage: 'zh', query: '?lang=en' }).root.lang, 'en');
+  assert.equal(setup({ savedLanguage: 'en', query: '?lang=zh' }).root.lang, 'zh-Hans');
+  const s = setup({ storageBlocked: true, query: '?lang=invalid&ref=cv' });
+  s.languageButtons[1].listeners.click();
+  assert.equal(s.root.lang, 'zh-Hans');
+  const url = new URL(s.location.href);
+  assert.equal(url.searchParams.get('ref'), 'cv');
+  assert.equal(url.searchParams.get('lang'), 'zh');
+});
+
+test('language changes preserve a playing transition and the paused state', async () => {
+  const s = setup();
+  await s.advance(30);
+  s.buttons[1].listeners.click();
+  await s.advance(300);
+  s.languageButtons[1].listeners.click();
+  await s.advance(950);
+  assert.equal(s.role.textContent, 'AI Agent 工程实习生');
+  s.button.listeners.click();
+  assert.equal(s.button.getAttribute('aria-label'), '继续动效');
+  s.languageButtons[0].listeners.click();
+  assert.equal(s.root.classList.contains('motion-paused'), true);
+  assert.equal(s.button.getAttribute('aria-label'), 'Resume animations');
+  assert.equal(s.role.textContent, 'AI Agent Engineering Intern');
+  s.buttons[2].listeners.click();
+  s.languageButtons[1].listeners.click();
+  assert.equal(s.role.textContent, 'Web3 赛道 · 第一名');
+});
 
 test('pause during a brand transition cancels it cleanly; resume cycles again', async () => {
   const s = setup();
