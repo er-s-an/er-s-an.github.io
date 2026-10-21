@@ -6,4 +6,9 @@ Downloaded 2026-10-21. Original marks retain their proportions and colors.
 - **Injective:** official [brand kit](https://injective.com/brand), `https://injective.com/brand/injective_logo.zip`, Black SVG variant. Used for the platform MAKEBOOK is building on.
 - **MAKEBOOK:** current [MAKEBOOK website](https://makebook.xyz), `/brand-site/assets/wordmark.svg` and `/brand-site/assets/mark.svg`. Used for Jiachen's main venture.
 
-The Red Star News name is ordinary text, not a recreated logo. The chrome sculpture is original generated artwork and is not a brand mark.
+Original brand assets identify the relevant employer, venture, platform or competition.
+
+- **AdventureX:** [official AdventureX-RGE/Playbook SVG](https://github.com/AdventureX-RGE/Playbook/blob/main/assets/images/logo/AdventureX.svg). Used for the AdventureX award and labeled as the competition.
+- **Red Star News:** official article presentation assets from `https://appstatic.cdsb.com/20191226-hx-logo.png` and `https://cdsbwwwqiniu.cdsb.com/20190223-hongxingholder.png`, linked by the official `static.cdsb.com` article template. Used for the completed internship.
+
+The hero carousel uses the original marks as masks for an animated chrome material. These are artistic treatments within a personal portfolio, not replacement brand assets. Each chapter states its relationship to Caesar. Caesar's signature is original generated artwork.
