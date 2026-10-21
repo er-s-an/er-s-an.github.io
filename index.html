@@ -20,14 +20,15 @@
   <link rel="preload" href="assets/fonts/syne-extrabold.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/fonts/space-grotesk-regular.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/caesar-signature.webp" as="image">
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <link rel="preload" href="assets/metal/caesar.png" as="image">
+  <link rel="stylesheet" href="style.css?v=liquid-morph-1">
+  <script src="liquid-metal.js?v=liquid-morph-1" defer></script>
+  <script src="script.js?v=liquid-morph-1" defer></script>
 </head>
 <body id="top">
   <svg class="material-defs" aria-hidden="true" width="0" height="0"><defs>
     <linearGradient id="liquid-chrome" x1="0" y1="0" x2="80" y2="400" gradientUnits="userSpaceOnUse" spreadMethod="reflect"><stop offset="0" stop-color="#f8fcff"/><stop offset=".12" stop-color="#798aaf"/><stop offset=".22" stop-color="#fdfefe"/><stop offset=".34" stop-color="#18274e"/><stop offset=".39" stop-color="#eef5ff"/><stop offset=".47" stop-color="#b9c7e3"/><stop offset=".53" stop-color="#fff"/><stop offset=".57" stop-color="#253452"/><stop offset=".68" stop-color="#aabbd9"/><stop offset=".8" stop-color="#fff"/><stop offset=".9" stop-color="#c4a5cf"/><stop offset="1" stop-color="#657ba8"/></linearGradient>
     <filter id="chrome-bevel" x="-20%" y="-30%" width="140%" height="160%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="2" result="bump"/><feSpecularLighting in="bump" surfaceScale="5" specularConstant="1.3" specularExponent="24" lighting-color="#fff" result="light"><fePointLight x="100" y="-150" z="300"/></feSpecularLighting><feComposite in="light" in2="SourceAlpha" operator="in" result="shine"/><feComposite in="SourceGraphic" in2="shine" operator="arithmetic" k1="0" k2="1" k3=".7" k4="0"/><feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#061849" flood-opacity=".4"/></filter>
-    <filter id="molten-coat" x="-20%" y="-80%" width="140%" height="260%"><feTurbulence type="fractalNoise" baseFrequency=".017 .026" numOctaves="1" seed="7" result="noise"/><feDisplacementMap id="intro-displacement" in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation=".5"/></filter>
     <filter id="redstar-ink" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="-6 0 0 0 5.6 -6 0 0 0 5.6 -6 0 0 0 5.6 0 0 0 1 0"/></filter>
     <mask id="brand-makebook" style="mask-type:alpha"><image href="assets/brands/makebook-mark.svg" x="170" y="60" width="260" height="250"/></mask>
     <mask id="brand-tencent" style="mask-type:alpha"><image href="assets/brands/tencent-white.png" x="30" y="60" width="540" height="270"/></mask>
@@ -36,7 +37,7 @@
   </defs></svg>
   <div class="brand-intro" aria-hidden="true" hidden>
     <div class="intro-veil"></div>
-    <div class="intro-logo"><img src="assets/caesar-signature.webp" width="1400" height="445" alt=""><div class="intro-metal"><div class="intro-coating"></div><i class="metal-drip"></i><i class="metal-drip"></i><i class="metal-drip"></i><i class="metal-drip"></i></div></div>
+    <div class="intro-logo"><img src="assets/caesar-signature.webp" width="1400" height="445" alt=""><canvas class="intro-liquid" width="1400" height="445"></canvas></div>
     <span class="intro-caption">CAESAR / FRESH OUT OF THE IDEA POOL.</span>
   </div>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -58,12 +59,13 @@
         <div class="hero-art entrance" aria-label="Places I have built things, brand showcase">
           <div class="orbit" aria-hidden="true"></div><span class="art-coordinate">A FEW CHAPTERS / STILL WRITING</span>
           <div class="brand-stage" aria-hidden="true">
+            <canvas class="brand-liquid" width="900" height="600"></canvas>
             <div class="brand-slide" data-brand="makebook"><svg viewBox="0 0 600 400"><g filter="url(#chrome-bevel)"><g mask="url(#brand-makebook)"><rect class="chrome-fill" x="-600" y="-400" width="1800" height="1200" fill="url(#liquid-chrome)"/></g></g></svg></div>
             <div class="brand-slide" data-brand="tencent" hidden><svg viewBox="0 0 600 400"><g filter="url(#chrome-bevel)"><g mask="url(#brand-tencent)"><rect class="chrome-fill" x="-600" y="-400" width="1800" height="1200" fill="url(#liquid-chrome)"/></g></g></svg></div>
             <div class="brand-slide" data-brand="advx" hidden><svg viewBox="0 0 600 400"><g filter="url(#chrome-bevel)"><g mask="url(#brand-advx)"><rect class="chrome-fill" x="-600" y="-400" width="1800" height="1200" fill="url(#liquid-chrome)"/></g></g></svg></div>
             <div class="brand-slide" data-brand="redstar" hidden><svg viewBox="0 0 600 400"><g filter="url(#chrome-bevel)"><g mask="url(#brand-redstar)"><rect class="chrome-fill" x="-600" y="-400" width="1800" height="1200" fill="url(#liquid-chrome)"/></g></g></svg></div>
           </div>
-          <div class="glass-id"><span class="id-top" id="brand-role">THE MAIN VENTURE / CTO</span><span class="id-name" id="brand-name">MAKEBOOK</span><span class="id-bottom"><span id="brand-note">PUTTING THE “MAKE” IN MAKEBOOK.</span><span class="asterisk" aria-hidden="true">✳</span></span></div>
+          <div class="glass-id"><span class="id-top" id="brand-name">MAKEBOOK / MAIN VENTURE</span><span class="id-name" id="brand-role">CTO &amp; builder</span><span class="id-bottom"><span id="brand-note">FULL-STACK PRODUCT &amp; SMART CONTRACTS.</span><span class="asterisk" aria-hidden="true">✳</span></span></div>
           <div class="brand-controls" role="group" aria-label="Choose a chapter"><button type="button" data-brand="makebook" aria-pressed="true" aria-label="Show MAKEBOOK">MB</button><button type="button" data-brand="tencent" aria-pressed="false" aria-label="Show Tencent">TENCENT</button><button type="button" data-brand="advx" aria-pressed="false" aria-label="Show AdventureX">ADVX</button><button type="button" data-brand="redstar" aria-pressed="false" aria-label="Show Red Star News">红星</button></div>
         </div>
       </div>

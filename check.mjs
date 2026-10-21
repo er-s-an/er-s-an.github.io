@@ -6,6 +6,7 @@ import { runInNewContext } from 'node:vm';
 const html = readFileSync(new URL('index.html', import.meta.url), 'utf8');
 const css = readFileSync(new URL('style.css', import.meta.url), 'utf8');
 const script = readFileSync(new URL('script.js', import.meta.url), 'utf8');
+import { liquidDistanceField } from './prepare-metal.mjs';
 
 test('public content, anchors, local assets and brand credits are complete', () => {
   for (const match of html.matchAll(/(?:href|src)="([^"?#]+)"/g)) {
@@ -20,9 +21,29 @@ test('public content, anchors, local assets and brand credits are complete', () 
   assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'));
   assert.ok(!html.includes('maximum-scale'));
   assert.equal((html.match(/<h1\b/g) || []).length, 1);
+  assert.match(html, /class="id-top" id="brand-name">MAKEBOOK \/ MAIN VENTURE/);
+  assert.match(html, /class="id-name" id="brand-role">CTO &amp; builder/);
+  assert.ok(!css.includes('brand-depart'));
+  for (const name of ['makebook', 'tencent', 'advx', 'redstar', 'caesar']) {
+    const png = readFileSync(new URL(`assets/metal/${name}.png`, import.meta.url));
+    assert.equal(png.toString('ascii', 1, 4), 'PNG');
+    assert.equal(png.readUInt32BE(20) % 2, 0);
+  }
 });
 
-function setup({ reduced = false, hash = '#work' } = {}) {
+test('distance fields preserve logo edges and reject empty masks', () => {
+  const distanceField = liquidDistanceField;
+  const mask = new Uint8Array(81);
+  for (let y = 2; y <= 6; y++) for (let x = 2; x <= 6; x++) mask[y * 9 + x] = 255;
+  const field = distanceField(mask, 9, 9);
+  assert.ok(field[40] < field[22] && field[22] < 0);
+  assert.ok(field[0] > field[10] && field[10] > 0);
+  assert.equal(field[0], field[8]);
+  assert.ok([...field].every(Number.isFinite));
+  assert.throws(() => distanceField(new Uint8Array(81), 9, 9), /Empty/);
+});
+
+function setup({ reduced = false, hash = '#work', gpu = true } = {}) {
   let now = 0, nextId = 1;
   const jobs = new Map();
   const schedule = (fn, delay, frame = false) => { const id = nextId++; jobs.set(id, { at: now + delay, fn, frame }); return id; };
@@ -39,11 +60,13 @@ function setup({ reduced = false, hash = '#work' } = {}) {
   };
   const root = element(), button = element(), label = element(), symbol = element();
   button.querySelector = q => q === '.motion-label' ? label : symbol;
-  const intro = element(), logo = element(), veil = element(), metal = element(), coating = element(), caption = element();
-  logo.querySelector = () => ({ decode: () => Promise.resolve() });
+  const intro = element(), logo = element(), veil = element(), introCanvas = element(), brandCanvas = element(), stage = element(), caption = element();
+  const signature = element();
+  signature.setAttribute('src', 'signature.webp');
+  logo.querySelector = () => signature;
   const monogram = element();
   monogram.getBoundingClientRect = () => ({ left: 48, top: 25, width: 145, height: 46 });
-  const hero = element(), displacement = element();
+  const hero = element();
   const names = ['makebook', 'tencent', 'advx', 'redstar'];
   const slides = names.map(brand => element({ brand }));
   slides[0].hidden = false;
@@ -51,12 +74,20 @@ function setup({ reduced = false, hash = '#work' } = {}) {
   buttons.forEach((b, i) => b.setAttribute('aria-pressed', String(i === 0)));
   const scenes = [element(), element(), element()];
   const name = element(), role = element(), note = element();
-  const one = { '.motion-button': button, '.brand-intro': intro, '.intro-logo': logo, '.intro-veil': veil, '.intro-metal': metal, '.intro-coating': coating, '.intro-caption': caption, '.hero-art': hero, '.monogram': monogram, '#intro-displacement': displacement, '#brand-name': name, '#brand-role': role, '#brand-note': note };
-  const many = { '.metal-drip': Array.from({ length: 4 }, () => element()), '.brand-slide': slides, '.brand-controls button': buttons, '[data-scroll-scene]': scenes };
+  const one = { '.motion-button': button, '.brand-intro': intro, '.intro-logo': logo, '.intro-veil': veil, '.intro-liquid': introCanvas, '.brand-stage': stage, '.brand-liquid': brandCanvas, '.intro-caption': caption, '.hero-art': hero, '.monogram': monogram, '#brand-name': name, '#brand-role': role, '#brand-note': note };
+  names.forEach(brand => { one[`#brand-${brand} image`] = element(); });
+  const many = { '.brand-slide': slides, '.brand-controls button': buttons, '[data-scroll-scene]': scenes };
   const media = { matches: reduced, addEventListener(_, fn) { this.change = fn; } };
   const window = { listeners: {}, addEventListener(k, fn) { this.listeners[k] = fn; } };
   const document = { hidden: false, activeElement: null, listeners: {}, documentElement: root, querySelector: q => one[q], querySelectorAll: q => many[q] || [], addEventListener(k, fn) { this.listeners[k] = fn; } };
-  runInNewContext(script, { document, window, matchMedia: () => media, location: { hash }, scrollY: 0, innerHeight: 900, performance: { now: () => now }, setTimeout: (fn, delay) => schedule(fn, delay), clearTimeout: id => jobs.delete(id), requestAnimationFrame: fn => schedule(fn, 16, true), cancelAnimationFrame: id => jobs.delete(id) });
+  const renderers = [];
+  const createLiquidMetal = async (canvas, sources, width, height, onLoss) => {
+    if (!gpu) throw new Error('WebGL unavailable');
+    const renderer = { canvas, calls: [], onLoss, draw(...args) { this.calls.push(args); }, destroy() { this.destroyed = true; } };
+    renderers.push(renderer);
+    return renderer;
+  };
+  runInNewContext(script, { document, window, createLiquidMetal, matchMedia: () => media, location: { hash }, scrollY: 0, innerHeight: 900, performance: { now: () => now }, setTimeout: (fn, delay) => schedule(fn, delay), clearTimeout: id => jobs.delete(id), requestAnimationFrame: fn => schedule(fn, 16, true), cancelAnimationFrame: id => jobs.delete(id) });
   async function advance(ms) {
     await new Promise(resolve => setImmediate(resolve));
     const end = now + ms;
@@ -70,7 +101,7 @@ function setup({ reduced = false, hash = '#work' } = {}) {
     now = end;
     await Promise.resolve();
   }
-  return { root, button, label, media, intro, logo, slides, buttons, name, scenes, window, document, advance };
+  return { root, button, label, media, intro, logo, slides, buttons, name, role, stage, scenes, window, document, renderers, advance };
 }
 
 test('pause during a brand transition cancels it cleanly; resume cycles again', async () => {
@@ -79,12 +110,12 @@ test('pause during a brand transition cancels it cleanly; resume cycles again', 
   s.button.listeners.click();
   await s.advance(1000);
   assert.equal(s.slides.filter(x => !x.hidden).length, 1);
-  assert.equal(s.slides[0].hidden, false);
+  assert.equal(s.slides[1].hidden, false);
   assert.equal(s.button.getAttribute('aria-label'), 'Resume animations');
   assert.equal(s.label.textContent, 'MOTION OFF');
   s.button.listeners.click();
-  await s.advance(5050);
-  assert.equal(s.name.textContent, 'Tencent');
+  await s.advance(6500);
+  assert.equal(s.role.textContent, 'Web3 Track · 1st place');
   assert.equal(s.buttons.filter(x => x.getAttribute('aria-pressed') === 'true').length, 1);
 });
 
@@ -95,8 +126,8 @@ test('reduced motion skips intro and autoplay, but manual brand selection works'
   assert.equal(s.button.disabled, true);
   assert.equal(s.slides[0].hidden, false);
   s.buttons[3].listeners.click();
-  assert.equal(s.name.textContent, 'Red Star News');
-  assert.equal(s.slides[3].classList.contains('is-arriving'), false);
+  assert.equal(s.role.textContent, 'AI & New Media Intern');
+  assert.equal(s.renderers.length, 0);
   s.media.matches = false; s.media.change();
   s.button.listeners.click();
   s.media.matches = true; s.media.change();
@@ -104,17 +135,65 @@ test('reduced motion skips intro and autoplay, but manual brand selection works'
   assert.equal(s.root.classList.contains('motion-paused'), true);
 });
 
-test('liquid intro drains, docks to the measured header, and clears within two seconds', async () => {
+test('liquid intro forms a signature, docks to the measured header, and clears within two seconds', async () => {
   const s = setup({ hash: '#top' });
   await s.advance(650);
   assert.equal(s.intro.hidden, false);
   assert.equal(s.root.classList.contains('intro-active'), true);
+  assert.ok(s.renderers[1].calls.some(([, , p]) => p > .5 && p < 1));
   await s.advance(800);
   assert.equal(s.logo.animation.options.duration, 500);
   assert.ok(s.logo.animation.frames[1].transform.includes('scale(0.20714285714285716)'));
   await s.advance(500);
   assert.equal(s.intro.hidden, true);
   assert.equal(s.root.classList.contains('intro-active'), false);
+});
+
+test('rapid choices keep a continuous surface and end on the latest destination', async () => {
+  const s = setup();
+  await s.advance(30);
+  s.buttons[1].listeners.click();
+  await s.advance(400);
+  s.buttons[3].listeners.click();
+  await s.advance(600);
+  s.buttons[2].listeners.click();
+  s.buttons[0].listeners.click();
+  await s.advance(2500);
+  assert.equal(s.role.textContent, 'CTO & builder');
+  assert.ok(s.renderers[0].calls.some(([, , p]) => p > .45 && p < .55));
+  assert.equal(s.slides.filter(x => !x.hidden).length, 1);
+  assert.equal(s.buttons[0].getAttribute('aria-pressed'), 'true');
+});
+
+test('GPU failure or context loss keeps the selected logo and controls usable', async () => {
+  const fallback = setup({ gpu: false, hash: '' });
+  await fallback.advance(1000);
+  assert.equal(fallback.intro.hidden, true);
+  fallback.buttons[3].listeners.click();
+  assert.equal(fallback.role.textContent, 'AI & New Media Intern');
+  assert.equal(fallback.stage.classList.contains('has-liquid-metal'), false);
+  const s = setup();
+  await s.advance(30);
+  s.buttons[2].listeners.click();
+  await s.advance(300);
+  s.renderers[0].onLoss();
+  assert.equal(s.stage.classList.contains('has-liquid-metal'), false);
+  assert.equal(s.slides[2].hidden, false);
+});
+
+test('backgrounding stops rendering and returns without a delayed transition', async () => {
+  const s = setup();
+  await s.advance(300);
+  s.buttons[1].listeners.click();
+  await s.advance(300);
+  s.document.hidden = true; s.document.listeners.visibilitychange();
+  const count = s.renderers[0].calls.length;
+  await s.advance(5000);
+  assert.equal(s.renderers[0].calls.length, count);
+  s.document.hidden = false; s.document.listeners.visibilitychange();
+  await s.advance(100);
+  assert.ok(s.renderers[0].calls.length > count);
+  assert.equal(s.role.textContent, 'AI Agent Engineering Intern');
 });
 
 test('user input dismisses the intro without blocking content or resurrecting it', async () => {
