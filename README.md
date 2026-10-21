@@ -2,7 +2,7 @@
 
 Personal website at **https://er-s-an.github.io/**.
 
-A pixel-art portfolio with streetwear lookbook details. Plain HTML, CSS, and JavaScript; no build step or third-party runtime requests. Original jacket artwork is inline SVG. Fonts are bundled under their SIL Open Font Licenses in `assets/fonts/`.
+A Y2K portfolio with liquid chrome, transparent materials, cobalt blue, pink and acid yellow. Plain HTML, CSS and JavaScript; no build step, runtime dependencies or third-party requests. Original chrome artwork is bundled as an optimized WebP. Syne and Space Grotesk are bundled under their SIL Open Font Licenses in `assets/fonts/`.
 
 ## Run locally
 
@@ -18,4 +18,4 @@ Open `http://127.0.0.1:53905`. GitHub Pages publishes the root of `main`.
 node --test check.mjs
 ```
 
-Content lives in `index.html`. Motion and colorway interactions live in `script.js`, with reduced-motion support and an explicit pause control. The CV is the public version, without private contact details.
+Content lives in `index.html`. Motion lives in `script.js`, with system reduced-motion support and an explicit pause control. Content remains readable without JavaScript. All internships are completed; uncertain end months are not invented. The CV is the public version, without private contact details. Brand source attribution is in `assets/brands/SOURCES.md`.
