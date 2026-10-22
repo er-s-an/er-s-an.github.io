@@ -14,8 +14,8 @@ const scenes = [...document.querySelectorAll('[data-scroll-scene]')];
 const brands = {
   makebook: ['MAKEBOOK / MAIN VENTURE', 'CTO & builder', 'FULL-STACK PRODUCT & SMART CONTRACTS.'],
   tencent: ['TENCENT GAMES / LIGHTSPEED · COMPLETED', 'AI Agent Engineering Intern', 'AI AGENTS · LLM RESEARCH · GAME DESIGN.'],
-  advx: ['ADVENTUREX 2026 / MAKEBOOK', 'Web3 Track · 1st place', 'A SIDE QUEST THAT BECAME THE MAIN QUEST.'],
-  redstar: ['RED STAR NEWS / COMPLETED', 'AI & New Media Intern', 'GENERATIVE MEDIA, DIGITAL HUMANS & DEADLINES.']
+  advx: ['ADVENTUREX 2026 / MAKEBOOK', 'Web3 Track · 1st place', 'FIRST PLACE, THEN BACK TO BUILDING.'],
+  redstar: ['RED STAR NEWS / COMPLETED', 'AI & New Media Intern', 'DIGITAL HUMANS, AI MEDIA & REAL DEADLINES.']
 };
 let paused = false;
 let currentBrand = 0;
