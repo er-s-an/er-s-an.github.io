@@ -123,7 +123,7 @@ async function ensureMetal() {
   if (metal || initializingMetal || stopped()) return;
   initializingMetal = true;
   try {
-    const sources = slides.map(slide => `assets/metal/${slide.dataset.brand}.png`);
+    const sources = slides.map(slide => `/assets/metal/${slide.dataset.brand}.png`);
     metal = await createLiquidMetal(brandCanvas, sources, 600, 400, () => {
       metal = undefined;
       cancelAnimationFrame(metalFrame);
@@ -186,7 +186,7 @@ async function startIntro() {
   try {
     let pageReady = false;
     Promise.all([document.fonts.ready, signature.decode()]).then(() => { pageReady = true; }, () => { pageReady = true; });
-    const ready = createLiquidMetal(introCanvas, ['assets/metal/caesar.png'], 1400, 445, finishIntro).then(renderer => {
+    const ready = createLiquidMetal(introCanvas, ['/assets/metal/caesar.png'], 1400, 445, finishIntro).then(renderer => {
       if (introDone) renderer.destroy();
       else introMetal = renderer;
     });

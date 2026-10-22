@@ -11,7 +11,7 @@ import { liquidDistanceField } from './prepare-metal.mjs';
 
 test('public content, anchors, local assets and brand credits are complete', () => {
   for (const match of html.matchAll(/(?:href|src)="([^"?#]+)"/g)) {
-    if (!/^(https?:|data:)/.test(match[1])) assert.ok(existsSync(new URL(match[1], import.meta.url)), match[1]);
+    if (!/^(https?:|data:)/.test(match[1])) assert.ok(existsSync(new URL(match[1].replace(/^\//, ''), import.meta.url)), match[1]);
   }
   for (const match of html.matchAll(/href="#([^"]+)"/g)) assert.ok(html.includes(`id="${match[1]}"`), match[1]);
   for (const text of ['Caesar', 'adventurex.svg', 'redstar-wordmark.png', 'brand-intro', 'CTO of', 'STUDENT ENTREPRENEUR', 'https://makebook.xyz', 'https://x.com/Aiyakale', 'AI agent-native engine for building web games', 'LLM Research Intern', 'Game Design Intern', 'AI &amp; New Media Intern', 'Web3 Track winner.', 'AdventureX 2026.', 'EVM testnet prototype']) assert.ok(html.includes(text), text);
@@ -54,7 +54,7 @@ function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0, s
       classList: { add: (...v) => v.forEach(x => classes.add(x)), remove: (...v) => v.forEach(x => classes.delete(x)), contains: x => classes.has(x), toggle: (x, on) => on ? classes.add(x) : classes.delete(x) },
       style: { setProperty(k, v) { this[k] = v; }, removeProperty(k) { delete this[k]; } },
       setAttribute(k, v) { this.attributes[k] = v; }, getAttribute(k) { return this.attributes[k] ?? null; },
-      addEventListener(k, fn) { this.listeners[k] = fn; }, contains() { return false; },
+      addEventListener(k, fn) { this.listeners[k] = (event = { button: 0, preventDefault() {} }) => fn(event); }, contains() { return false; },
       getBoundingClientRect() { return { left: 200, top: 300, width: 700, height: 222 }; },
       animate(frames, options) { this.animation = { frames, options }; return { finished: new Promise(resolve => schedule(resolve, options.duration)), cancel() {} }; }
     };
@@ -78,6 +78,7 @@ function setup({ reduced = false, hash = '#work', gpu = true, assetsDelay = 0, s
   const scenes = [element(), element(), element()];
   const name = element(), role = element(), note = element();
   const one = { '.motion-button': button, '.brand-intro': intro, '.intro-logo': logo, '.intro-veil': veil, '.intro-liquid': introCanvas, '.brand-stage': stage, '.brand-liquid': brandCanvas, '.intro-caption': caption, '.hero-art': hero, '.monogram': monogram, '#brand-name': name, '#brand-role': role, '#brand-note': note };
+  for (const selector of ['link[rel="canonical"]', 'meta[property="og:url"]', 'meta[property="og:locale"]', 'meta[property="og:locale:alternate"]']) one[selector] = element();
   names.forEach(brand => { one[`#brand-${brand} image`] = element(); });
   const many = { '.brand-slide': slides, '.brand-controls button': buttons, '[data-scroll-scene]': scenes };
   const languageButtons = ['en', 'zh'].map(language => element({ language }));
@@ -149,7 +150,8 @@ test('language URLs override saved preferences; Chinese browsers have a sensible
   assert.equal(s.root.lang, 'zh-Hans');
   const url = new URL(s.location.href);
   assert.equal(url.searchParams.get('ref'), 'cv');
-  assert.equal(url.searchParams.get('lang'), 'zh');
+  assert.equal(url.pathname, '/zh/');
+  assert.equal(url.searchParams.get('lang'), null);
 });
 
 test('language changes preserve a playing transition and the paused state', async () => {

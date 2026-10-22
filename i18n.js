@@ -1,5 +1,5 @@
 const chineseCopy = {
-  "page.title": "Caesar / 谢佳辰 — 代码、创作与好奇心",
+  "page.title": "谢佳辰 Caesar / Jiachen Xie — MAKEBOOK CTO · AI Agent 与创作工具",
   "skip": "跳到正文",
   "identity": "谢佳辰<small>也可以叫我 CAESAR</small>",
   "nav.work": "作品",
@@ -123,13 +123,15 @@ const chineseCopy = {
   "motion.reduced": "跟随系统设置，减少动态效果"
 };
 
+const sourceEnglish = JSON.parse(document.querySelector('#english-copy')?.textContent || '{}');
 const localizedNodes = [];
 for (const [marker, attribute] of [['data-i18n', null], ['data-i18n-aria', 'aria-label'], ['data-i18n-content', 'content']]) {
   for (const element of document.querySelectorAll(`[${marker}]`)) {
-    localizedNodes.push({ element, attribute, key: element.getAttribute(marker), english: attribute ? element.getAttribute(attribute) : element.innerHTML });
+    const key = element.getAttribute(marker);
+    localizedNodes.push({ element, attribute, key, english: sourceEnglish[`${marker}:${key}`] ?? (attribute ? element.getAttribute(attribute) : element.innerHTML) });
   }
 }
-const languageButtons = [...document.querySelectorAll('[data-language]')];
+const languageLinks = [...document.querySelectorAll('[data-language]')];
 
 function translate(key, english) {
   return document.documentElement.lang === 'zh-Hans' ? chineseCopy[key] ?? english : english;
@@ -145,12 +147,27 @@ function setLanguage(language, userAction = false) {
     if (attribute) element.setAttribute(attribute, text);
     else element.innerHTML = text;
   }
-  languageButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.language === language)));
+  languageLinks.forEach(link => link.setAttribute('aria-current', link.dataset.language === language ? 'page' : 'false'));
   try { localStorage.setItem('caesar-language', language); } catch {}
-  if (userAction) {
-    const url = new URL(location.href);
-    url.searchParams.set('lang', language);
-    history.replaceState(history.state, '', url);
+  const url = new URL(location.href);
+  url.pathname = `/${language}/`;
+  url.searchParams.delete('lang');
+  history.replaceState(history.state, '', url);
+  const pageUrl = `https://er-s-an.github.io/${language}/`;
+  document.querySelector('link[rel="canonical"]').setAttribute('href', pageUrl);
+  document.querySelector('meta[property="og:url"]').setAttribute('content', pageUrl);
+  document.querySelector('meta[property="og:locale"]').setAttribute('content', language === 'zh' ? 'zh_CN' : 'en_US');
+  document.querySelector('meta[property="og:locale:alternate"]').setAttribute('content', language === 'zh' ? 'en_US' : 'zh_CN');
+  const schemaNode = document.querySelector('#profile-schema');
+  if (schemaNode) {
+    const schema = JSON.parse(schemaNode.textContent);
+    schema.url = pageUrl;
+    schema['@id'] = `${pageUrl}#profile`;
+    schema.inLanguage = document.documentElement.lang;
+    schema.name = document.title;
+    schema.description = document.querySelector('meta[name="description"]').content;
+    schema.mainEntity.description = document.querySelector('meta[property="og:description"]').content;
+    schemaNode.textContent = JSON.stringify(schema).replaceAll('<', '\\u003c');
   }
   document.dispatchEvent(new Event('languagechange'));
   if (anchor) {
@@ -165,8 +182,12 @@ function setLanguage(language, userAction = false) {
 let savedLanguage;
 try { savedLanguage = localStorage.getItem('caesar-language'); } catch {}
 const requestedLanguage = new URL(location.href).searchParams.get('lang');
-const initialLanguage = [requestedLanguage, savedLanguage].find(language => language === 'en' || language === 'zh') || (navigator.language.startsWith('zh') ? 'zh' : 'en');
+const routeLanguage = new URL(location.href).pathname.match(/^\/(en|zh)\/?$/)?.[1];
+const initialLanguage = [requestedLanguage, routeLanguage, savedLanguage].find(language => language === 'en' || language === 'zh') || (navigator.language.startsWith('zh') ? 'zh' : 'en');
 setLanguage(initialLanguage);
-document.querySelector('.language-switch').hidden = false;
-languageButtons.forEach(button => button.addEventListener('click', () => setLanguage(button.dataset.language, true)));
+languageLinks.forEach(link => link.addEventListener('click', event => {
+  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  setLanguage(link.dataset.language, true);
+}));
 
