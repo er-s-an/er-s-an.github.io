@@ -34,6 +34,8 @@
 @keyframes metal-float{0%,100%{transform:perspective(900px) translate3d(0,6px,0) rotateX(9deg) rotateY(-14deg) rotateZ(-7deg)}50%{transform:perspective(900px) translate3d(0,-9px,22px) rotateX(-7deg) rotateY(16deg) rotateZ(-3deg)}}
 .art-offscreen .brand-stage,.page-hidden .brand-stage{animation-play-state:paused}
 
+.writing{border-top:1px solid var(--line);padding-top:32px;scroll-margin-top:32px}.writing-copy h3{font-size:clamp(1.5rem,2.6vw,2rem);line-height:1.25;margin:12px 0 16px}.writing-copy p:not(.eyebrow){font-size:.875rem;color:#454551}.writing-copy p.writing-source{margin-top:14px;font-size:.75rem}
+
 /* Language choices stay available without crowding the signature on small screens. */
 .header-controls{display:flex;align-items:center;gap:10px;flex-shrink:0}.language-switch{display:inline-flex;align-items:center;padding:3px;border:1px solid var(--line);border-radius:99px}.language-switch[hidden]{display:none}.language-switch a{display:grid;place-items:center;text-decoration:none;border:0;background:transparent;border-radius:99px;min-width:44px;min-height:44px;padding:8px;font-size:.6875rem;line-height:1}.language-switch a[aria-current="page"]{background:var(--ink);color:white}.language-switch a:hover{box-shadow:inset 0 0 0 1px var(--ink)}
 :root{--body:Space,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;--display:Syne,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
