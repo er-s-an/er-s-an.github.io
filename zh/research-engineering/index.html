@@ -3,17 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>谢佳辰｜AI 研究工程实习与 Agent 评测</title>
-  <meta name="description" content="谢佳辰，香港城市大学本科生，曾实习于腾讯游戏光子工作室群。做过大模型 Agent 评测、电脑操作和 MCP 工具调用，希望参与模型后训练相关的 AI 研究工程实习。">
+  <title>谢佳辰｜大模型 Agent 评测与研究工程</title>
+  <meta name="description" content="谢佳辰在真实软件、浏览器和游戏任务中评测 Coding Agent，内容涵盖 Agent 对照实验、MCP 工程、模型实测、失败分析与研究工程实习证据。">
   <link rel="canonical" href="https://er-s-an.github.io/zh/research-engineering/">
   <link rel="alternate" hreflang="en" href="https://er-s-an.github.io/en/research-engineering/">
   <link rel="alternate" hreflang="zh-Hans" href="https://er-s-an.github.io/zh/research-engineering/">
-  <meta property="og:title" content="谢佳辰｜AI 研究工程实习与 Agent 评测">
-  <meta property="og:description" content="腾讯游戏 AI Agent 工程实习，Kimi K3 与腾讯混元 HY4 实测，RAG-Anything 和 LightRAG 开源贡献。">
+  <meta property="og:title" content="谢佳辰｜大模型 Agent 评测与研究工程">
+  <meta property="og:description" content="在真实软件、浏览器和游戏任务中评测 Coding Agent，以对照实验、腾讯游戏工程经历和已合并开源贡献作为证据。">
   <meta property="og:url" content="https://er-s-an.github.io/zh/research-engineering/">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://er-s-an.github.io/assets/social-card.png">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/style.css?v=research-profile-1">
+  <link rel="stylesheet" href="/style.css?v=research-profile-2">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "url": "https://er-s-an.github.io/zh/research-engineering/",
+    "name": "谢佳辰｜大模型 Agent 评测与研究工程",
+    "description": "在真实软件、浏览器和游戏任务中评测 Coding Agent，以对照实验、腾讯游戏工程经历和已合并开源贡献作为证据。",
+    "inLanguage": "zh-Hans",
+    "mainEntity": {"@id": "https://er-s-an.github.io/#person"}
+  }
+  </script>
 </head>
 <body>
   <header class="research-nav wrap">
@@ -21,22 +33,47 @@
     <a class="text-link" href="/en/research-engineering/" lang="en">English</a>
   </header>
   <main class="research-profile wrap">
-    <h1>谢佳辰 <span lang="en">Jiachen Xie</span></h1>
-    <p class="research-role">寻找 AI 研究工程实习</p>
-    <p>我在香港城市大学读本科，主修计算机与数据工程，预计 2028 年毕业。我曾在腾讯游戏光子工作室群做 AI Agent 工程实习，搭过 Agent 系统，也用真实任务检验模型能否调用工具、完成交付。</p>
+    <h1>谢佳辰 <span lang="en">/ Jiachen Xie</span></h1>
+    <p class="research-role">大模型 Agent 评测与研究工程</p>
+    <p>我在真实软件、浏览器和游戏任务中评测 Coding Agent，也搭建让这些行为可以被量化的 Harness。我就读于香港城市大学计算机与数据工程专业，预计 2028 年毕业，曾在腾讯游戏光子工作室群做 AI Agent 工程实习。</p>
     <div class="research-links">
       <a class="button button-dark" href="mailto:3137612974@qq.com">邮件联系</a>
       <a class="text-link" href="/cv/Jiachen-Xie-CV.pdf">英文简历 PDF ↗</a>
       <a class="text-link" href="https://github.com/er-s-an">GitHub ↗</a>
     </div>
 
-    <section class="research-evidence" id="agent-evaluation" aria-labelledby="eval-heading">
-      <h2 id="eval-heading">大模型 Agent 评测与电脑操作</h2>
-      <p>实测腾讯混元 HY4 的长程任务、电脑操作和参考图到可玩网页游戏的交付能力。文章记录了任务失败案例，也说明各模型的运行框架和环境差异如何影响对比。另一篇 Kimi K3 实测用游戏原型和面向 Agent 的视频剪辑工具观察任务完成度、视觉反馈和 Token 成本。</p>
-      <div class="research-links">
-        <a class="text-link" href="https://mp.weixin.qq.com/s/eKSEQGT96DfqBqILkpp4Bg">腾讯混元 HY4 实测 ↗</a>
-        <a class="text-link" href="https://news.qq.com/rain/a/20260718A0AXJ700">Kimi K3 实测 ↗</a>
-      </div>
+    <section class="research-proof-grid" aria-label="研究工程证据精选">
+      <article class="experience-card contribution research-proof">
+        <p class="eyebrow">AGENT 评测</p>
+        <h2>Section9</h2>
+        <strong class="research-proof-stat">4 类场景 · 8 次 arm run</strong>
+        <p>在四类受控场景中对照单 Agent 与多 Agent 的故障响应，最终版本共 8 次 arm run，任务结果、延迟和 Token 证据都可检查。</p>
+        <div class="research-links">
+          <a class="text-link" href="/zh/work/section9/">阅读评测案例 ↗</a>
+          <a class="text-link" href="https://github.com/er-s-an/section9/blob/main/docs/SHOWCASE_DELIVERY.md">原始实验记录 ↗</a>
+        </div>
+      </article>
+      <article class="experience-card contribution research-proof">
+        <p class="eyebrow">CODING AGENT 与电脑操作</p>
+        <h2>Kimi / 混元</h2>
+        <strong class="research-proof-stat">真实任务 · 失败分析</strong>
+        <p>用游戏原型、视频剪辑、长程电脑操作和参考图生成游戏等任务，检查交付质量、失败模式、视觉反馈与 Token 成本。</p>
+        <div class="research-links">
+          <a class="text-link" href="https://news.qq.com/rain/a/20260718A0AXJ700">Kimi K3 实测 ↗</a>
+          <a class="text-link" href="https://mp.weixin.qq.com/s/eKSEQGT96DfqBqILkpp4Bg">混元 HY4 实测 ↗</a>
+          <a class="text-link" href="/zh/work/kanshan/">查看游戏任务环境 ↗</a>
+        </div>
+      </article>
+      <article class="experience-card contribution research-proof">
+        <p class="eyebrow">开源工程</p>
+        <h2>RAG-Anything</h2>
+        <strong class="research-proof-stat">65→21 次 embedding</strong>
+        <p>已合并的摄入优化，在一个合成多模态样例中把 embedding 调用从 65 次降至 21 次、文本模型调用从 6 次降至 4 次，并通过真实存储回归和维护者审批。</p>
+        <div class="research-links">
+          <a class="text-link" href="/zh/work/rag-anything-ingestion/">阅读工程案例 ↗</a>
+          <a class="text-link" href="https://github.com/HKUDS/RAG-Anything/pull/453">已合并 PR #453 ↗</a>
+        </div>
+      </article>
     </section>
 
     <section class="research-evidence" id="agent-tool-use" aria-labelledby="tools-heading">
@@ -52,23 +89,23 @@
       <h2 id="environments-heading">Web 与游戏任务环境</h2>
       <p>在腾讯游戏，我开发了 Godot 编辑器插件原型，让游戏资产工作流可以调用生成模型 API。在《看山任意门》中，我们把故事编译成浏览器里的可玩游戏。编译阶段校验结构化的故事包，运行时按确定性规则推进游戏状态、判定证据。项目入围知乎黑客松 S2 全国总决赛。</p>
       <div class="research-links">
-        <a class="text-link" href="https://github.com/er-s-an/kanshanOPENdoor">看山任意门编译器和游戏运行时 ↗</a>
+        <a class="text-link" href="/zh/work/kanshan/">看山工程案例 ↗</a>
+        <a class="text-link" href="https://github.com/er-s-an/kanshanOPENdoor">编译器和游戏运行时 ↗</a>
         <a class="text-link" href="/zh/#zhihu-s2-award">知乎黑客松 S2 入围记录 ↗</a>
       </div>
     </section>
 
     <section class="research-evidence" id="multimodal-rag" aria-labelledby="rag-heading">
-      <h2 id="rag-heading">多模态 RAG 与文档入库</h2>
-      <p>截至 2026 年 11 月，我按 GitHub 提交数位列 RAG-Anything 贡献者前五。我减少了多模态文档入库时的模型调用，也为 LightRAG 增加了启动时发现已安装的自定义文档分块插件的功能。</p>
+      <h2 id="rag-heading">更多多模态 RAG 与文档入库工作</h2>
+      <p>截至 2026 年 11 月，我按 GitHub 提交数位列 RAG-Anything 贡献者前五。除了摄入优化，我也为 LightRAG 增加了启动时发现已安装的自定义文档分块插件的功能。</p>
       <div class="research-links">
-        <a class="text-link" href="https://github.com/HKUDS/RAG-Anything/pull/453">RAG-Anything 入库优化 PR ↗</a>
         <a class="text-link" href="https://github.com/HKUDS/LightRAG/pull/3869">LightRAG 分块插件 PR ↗</a>
         <a class="text-link" href="/zh/#open-source">开源贡献精选 ↗</a>
       </div>
     </section>
 
     <section class="research-evidence" id="research-interests" aria-labelledby="interests-heading">
-      <h2 id="interests-heading">模型后训练与 Agent 评测</h2>
+      <h2 id="interests-heading">研究工程实习意向</h2>
       <p>我希望加入月之暗面（Moonshot AI）的 Kimi 团队实习，也对其他顶尖 AI 实验室的机会感兴趣。我在找 AI 研究工程或 AI Agent 工程实习，希望在浏览器和游戏引擎里为 Coding Agent 设计可执行任务、验收标准和反馈机制。</p>
       <p>实习地点不限，愿为合适的机会调整学业安排。</p>
     </section>

@@ -370,3 +370,16 @@ test('case studies are complete in initial HTML without scripts', () => {
     }
   }
 });
+
+
+test('research portfolio links the three evidence-backed case studies', () => {
+  for (const language of ['en', 'zh']) {
+    const page = readFileSync(new URL(`${language}/research-engineering/index.html`, import.meta.url), 'utf8');
+    for (const slug of ['section9', 'kanshan', 'rag-anything-ingestion']) {
+      assert.ok(page.includes(`/${language}/work/${slug}/`), `${language}: ${slug}`);
+    }
+    assert.ok(page.includes('application/ld+json'), `${language}: ProfilePage schema`);
+    assert.ok(page.includes('Kimi'), `${language}: Kimi preference remains`);
+    assert.ok(page.includes('65'), `${language}: RAG fixture evidence`);
+  }
+});

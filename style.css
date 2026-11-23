@@ -118,3 +118,12 @@
 .case-method{margin:16px 0 50px;padding:26px;border:1px solid var(--line);border-radius:18px;background:#f0f5ff}
 .case-method h2{font-size:1.1rem;margin-bottom:10px}
 @media(max-width:700px){.case-facts,.case-section{grid-template-columns:1fr;gap:18px}.case-metrics{grid-template-columns:1fr}.case-hero{border-radius:16px}.case-profile h1{font-size:clamp(2.2rem,10vw,3.6rem)}}
+
+.research-profile{max-width:1040px}
+.research-proof-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:42px}
+.research-proof{width:100%;min-height:100%;padding:26px}
+.research-proof h2{color:#f0f6fc;font-size:clamp(1.45rem,2.5vw,2rem);line-height:1.15;margin-bottom:14px;overflow-wrap:anywhere}
+.research-proof-stat{display:block;color:#d8ff52;font-family:var(--display);font-size:1.05rem;line-height:1.35;margin-bottom:18px}
+.research-proof .research-links{width:100%;margin-top:auto;padding-top:14px}
+.research-proof .text-link{color:#a5d6ff}
+@media(max-width:900px){.research-proof-grid{grid-template-columns:1fr}.research-proof{min-height:0}}
