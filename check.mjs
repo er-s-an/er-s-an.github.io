@@ -383,3 +383,14 @@ test('research portfolio links the three evidence-backed case studies', () => {
     assert.ok(page.includes('65'), `${language}: RAG fixture evidence`);
   }
 });
+
+
+test('homepage exposes agent evaluation positioning and case-study links', () => {
+  for (const target of ['/en/work/section9/', '/en/work/kanshan/', '/en/work/rag-anything-ingestion/', '/en/research-engineering/']) {
+    assert.ok(html.includes(target), target);
+  }
+  for (const term of ['Agent evaluation', 'Coding agents', 'knowsAbout']) assert.ok(html.includes(term), term);
+  const copy = JSON.parse(localization.slice(localization.indexOf('{'), localization.indexOf('\n};') + 2));
+  assert.ok(copy['career.hero'].includes('/zh/research-engineering/'));
+  assert.ok(copy['oss.ragCase'].includes('/zh/work/rag-anything-ingestion/'));
+});

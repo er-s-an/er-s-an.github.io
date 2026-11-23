@@ -608,7 +608,7 @@ Keep AgentMED and BLACK BOX rows unchanged. Keep the existing GitHub destination
 <a class="text-link case-study-link" href="/en/work/kanshan/" data-i18n="kanshan.case">Read Kanshan case study <span aria-hidden="true">→</span></a>
 ```
 
-Keep the existing Section9 row as project 01 and preserve the current 01–04 numbering. Its GitHub destination remains `https://github.com/er-s-an/section9`; change its visible tag to `AGENT EVALUATION / INCIDENT RESPONSE`, and its summary to `Paired single-agent and multi-agent incident response with business acceptance, latency, token usage, and independently checked evidence.` Update the Chinese translation without duplicating the project row.
+Add a Section9 row as project 01 and renumber AgentMED, BLACK BOX, and Kanshan to 02, 03, and 04. The current homepage source has no Section9 row. Its GitHub destination is `https://github.com/er-s-an/section9`; its visible tag is `AGENT EVALUATION / INCIDENT RESPONSE`, and its summary is `Paired single-agent and multi-agent incident response with business acceptance, latency, token usage, and independently checked evidence.` Add the Chinese translation.
 
 Add `oss.ragCase` below the existing RAG contribution paragraph, preserving both upstream PR links:
 

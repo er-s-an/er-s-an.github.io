@@ -21,7 +21,7 @@ Open `http://127.0.0.1:53905`. GitHub Pages publishes the root of `main`.
 node --test check.mjs
 ```
 
-Content lives in `index.html`. The continuous silhouette and reflective shading use native WebGL2 in `liquid-metal.js`, with the original SVG logos as a fallback. Motion lives in `script.js`: a dismissible intro, manually selectable brand carousel, staggered section reveals and scroll-linked glass reflections. System reduced motion skips the intro and autoplay; the global pause control stops all decorative motion. Scrolling never gets intercepted. Content remains readable without JavaScript. All internships are completed; uncertain end months are not invented. The CV is the public version, without private contact details. Brand source attribution is in `assets/brands/SOURCES.md`.
+Homepage content lives in `index.html`. Bilingual case-study content lives in `case-studies.json`, rendered through `case-study-template.html`; their images are local files in `assets/case-studies/`. The continuous silhouette and reflective shading use native WebGL2 in `liquid-metal.js`, with the original SVG logos as a fallback. Motion lives in `script.js`: a dismissible intro, manually selectable brand carousel, staggered section reveals and scroll-linked glass reflections. System reduced motion skips the intro and autoplay; the global pause control stops all decorative motion. Scrolling never gets intercepted. Content remains readable without JavaScript. All internships are completed; uncertain end months are not invented. The CV is the public version, without private contact details. Brand source attribution is in `assets/brands/SOURCES.md`.
 
 ## Languages
 
@@ -29,11 +29,11 @@ English is available at **[/en/](https://er-s-an.github.io/en/)** and Simplified
 
 The root URL follows the saved or browser language. Explicit language paths take priority over those preferences. Legacy `?lang=en` and `?lang=zh` links still work and normalize to the language path while preserving section anchors and other query parameters. English copy lives in `index.html`; Chinese copy and the small language controller live in `i18n.js`. The public CV is an English PDF.
 
-After editing either source, run `python3 build-locales.py` and commit the generated `en/index.html`, `zh/index.html`, `robots.txt` and `sitemap.xml` with the source. The generator checks translation coverage, balanced markup and local links. It embeds the original English strings in the Chinese page so instant switching restores the English markup correctly. There are no build dependencies to install.
+After editing the homepage or case-study sources, run `python3 build-locales.py` and commit the generated `en/index.html`, `zh/index.html`, `en/work/`, `zh/work/`, `robots.txt` and `sitemap.xml` with the source. The generator checks translation coverage, balanced markup, unresolved template tokens and local links. It embeds the original English strings in the Chinese page so instant switching restores the English markup correctly. Case pages contain their complete content in the initial HTML and need no JavaScript. There are no build dependencies to install.
 
 ## Search metadata
 
-Each homepage has a canonical URL, reciprocal `hreflang` links, localized metadata, and `ProfilePage` and `Person` structured data. The root is the `x-default` entry and canonicals to English. The sitemap lists both homepages and the standalone research engineering portfolios at `/en/research-engineering/` and `/zh/research-engineering/`. Check indexing and search performance in an owner-verified Search Console property.
+Every public page has a canonical URL, reciprocal `hreflang` links and localized metadata. Homepages and research portfolios use `ProfilePage` and `Person` structured data; case pages include breadcrumbs and software-source metadata. The root is the `x-default` entry and canonicals to English. The sitemap lists ten URLs: `/en/`, `/zh/`, `/en/research-engineering/`, `/zh/research-engineering/`, and both language versions of `/work/section9/`, `/work/kanshan/` and `/work/rag-anything-ingestion/`. Check indexing and search performance in an owner-verified Search Console property.
 
 ## Metal assets
 
