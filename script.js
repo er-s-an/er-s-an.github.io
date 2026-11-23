@@ -152,6 +152,78 @@ function queueScroll() {
   if (!stopped() && !scrollFrame) scrollFrame = requestAnimationFrame(updateScroll);
 }
 
+function initializeContributionDeck() {
+  const deck = document.querySelector('.more-contributions');
+  if (!deck) return;
+  const trigger = deck.querySelector('summary');
+  const face = trigger.querySelector('.deck-face');
+  const tray = deck.querySelector('.contribution-tray');
+  if (!tray.animate) return;
+  const cards = [...tray.querySelectorAll('.contribution')];
+  let animations = [];
+
+  function settle() {
+    animations.forEach(animation => animation.cancel());
+    animations = [];
+    deck.classList.remove('dealing');
+  }
+
+  trigger.addEventListener('click', event => {
+    if (deck.open) { settle(); return; }
+    if (stopped()) return;
+    event.preventDefault();
+    deck.open = true;
+
+    const origin = trigger.getBoundingClientRect();
+    const trayBounds = tray.getBoundingClientRect();
+    const destinations = cards.map(card => card.getBoundingClientRect());
+    const lead = 130;
+    const interval = 240;
+    const travel = 460;
+    const duration = lead + (cards.length - 1) * interval + travel;
+    const ease = 'cubic-bezier(.22,.72,.26,1)';
+    const heightFrames = [{ height: '0px', offset: 0, easing: ease }];
+    let reservedHeight = 0;
+    // Make room for each row before its first card leaves the deck.
+    destinations.forEach((target, index) => {
+      if (index > 0 && target.top === destinations[index - 1].top) return;
+      const rowStart = index * interval;
+      if (rowStart > 0) heightFrames.push({ height: `${reservedHeight}px`, offset: rowStart / duration, easing: ease });
+      reservedHeight = target.bottom - trayBounds.top;
+      heightFrames.push({ height: `${reservedHeight}px`, offset: (rowStart + lead) / duration });
+    });
+    heightFrames.push({ height: `${trayBounds.height}px`, offset: 1 });
+
+    deck.classList.add('dealing');
+    const opening = tray.animate(heightFrames, { duration, fill: 'both' });
+    const lift = face.animate([
+      { transform: 'none' },
+      { transform: 'translateY(3px) scale(.988)', offset: .25 },
+      { transform: 'translateY(-4px)', offset: .65 },
+      { transform: 'none' }
+    ], { duration: 290, easing: 'ease-in-out' });
+    const dealtCards = cards.map((card, index) => {
+      const target = destinations[index];
+      const x = origin.left + origin.width / 2 - target.left - target.width / 2;
+      const y = origin.bottom - target.top - 32;
+      const angle = index % 2 ? 8 : -8;
+      return card.animate([
+        { transform: `translate(${x}px,${y}px) rotate(${angle}deg) scale(.76)`, opacity: 0 },
+        { transform: `translate(${x * .6}px,${y * .64}px) rotate(${angle * .65}deg) scale(.86)`, opacity: 1, offset: .27 },
+        { transform: `translateY(-6px) rotate(${-angle * .12}deg)`, opacity: 1, offset: .82 },
+        { transform: 'none', opacity: 1 }
+      ], { duration: travel, delay: lead + index * interval, easing: 'cubic-bezier(.24,.62,.32,1)', fill: 'both' });
+    });
+    const sequence = [opening, lift, ...dealtCards];
+    animations = sequence;
+    opening.onfinish = () => { if (animations === sequence) settle(); };
+  });
+
+  deck.addEventListener('toggle', () => { if (!deck.open) settle(); });
+  tray.addEventListener('focusin', settle);
+  return settle;
+}
+
 function syncMotion() {
   const off = stopped();
   root.classList.toggle('motion-paused', off);
@@ -162,6 +234,7 @@ function syncMotion() {
   motionButton.querySelector('.motion-label').textContent = off ? translate('motion.off', 'MOTION OFF') : translate('motion.on', 'MOTION ON');
   motionButton.querySelector('.motion-symbol').textContent = off ? '▷' : 'Ⅱ';
   if (off) {
+    settleContributionDeck?.();
     finishIntro();
     settleMorph();
     cancelAnimationFrame(metalFrame);
@@ -228,11 +301,12 @@ async function startIntro() {
   } catch { finishIntro(); }
 }
 
+const settleContributionDeck = initializeContributionDeck();
 motionButton.hidden = false;
 selectBrand(currentBrand);
 syncMotion();
 startIntro();
-document.addEventListener('languagechange', () => { selectBrand(currentBrand); syncMotion(); });
+document.addEventListener('languagechange', () => { settleContributionDeck?.(); selectBrand(currentBrand); syncMotion(); });
 motionButton.addEventListener('click', () => { paused = !paused; syncMotion(); });
 reducedMotion.addEventListener('change', syncMotion);
 brandButtons.forEach((button, index) => button.addEventListener('click', () => showBrand(index)));
@@ -241,7 +315,7 @@ heroArt.addEventListener('pointerleave', () => { interacting = heroArt.contains(
 heroArt.addEventListener('focusin', () => { interacting = true; scheduleRotation(); });
 heroArt.addEventListener('focusout', event => { interacting = heroArt.contains(event.relatedTarget); scheduleRotation(); });
 window.addEventListener('scroll', queueScroll, { passive: true });
-window.addEventListener('resize', () => { if (!intro.hidden) finishIntro('resize'); queueScroll(); }, { passive: true });
+window.addEventListener('resize', () => { settleContributionDeck?.(); if (!intro.hidden) finishIntro('resize'); queueScroll(); }, { passive: true });
 // An intro is decoration: any attempt to use the page dismisses it immediately.
 ['pointerdown', 'wheel', 'touchstart', 'keydown'].forEach(type => window.addEventListener(type, finishIntro, { once: true, passive: true }));
 document.addEventListener('visibilitychange', () => {

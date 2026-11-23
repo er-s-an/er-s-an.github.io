@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parent
 BASE = "https://er-s-an.github.io"
+PUBLIC_PAGES = ("en", "zh", "en/research-engineering", "zh/research-engineering")
 source = (ROOT / "index.html").read_text()
 translations = (ROOT / "i18n.js").read_text().split("const chineseCopy = ", 1)[1].split("\n};", 1)[0]
 chinese = json.loads(translations + "\n}")
@@ -121,10 +122,10 @@ for language in ("en", "zh"):
     (directory / "index.html").write_text(render(language))
 
 (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {BASE}/sitemap.xml\n")
-(ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{BASE}/{language}/</loc></url>\n" for language in ("en", "zh")) + "</urlset>\n")
+(ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{BASE}/{path}/</loc></url>\n" for path in PUBLIC_PAGES) + "</urlset>\n")
 
-for language in ("en", "zh"):
-    output = Page((ROOT / language / "index.html").read_text())
+for path in PUBLIC_PAGES:
+    output = Page((ROOT / path / "index.html").read_text())
     for record in output.records:
         for attr in ("href", "src"):
             value = record["attrs"].get(attr, "")

@@ -9,6 +9,7 @@ Downloaded 2026-10-21. Original marks retain their proportions and colors.
 Original brand assets identify the relevant employer, venture, platform or competition.
 
 - **AdventureX:** [official AdventureX-RGE/Playbook SVG](https://github.com/AdventureX-RGE/Playbook/blob/main/assets/images/logo/AdventureX.svg). Used for the AdventureX award and labeled as the competition.
+- **GitHub:** [GitHub mark from Primer Octicons](https://github.com/primer/octicons/blob/main/icons/mark-github-24.svg), retrieved 2026-11-23. Links to Jiachen’s GitHub profile.
 - **Red Star News:** official article presentation assets from `https://appstatic.cdsb.com/20191226-hx-logo.png` and `https://cdsbwwwqiniu.cdsb.com/20190223-hongxingholder.png`, linked by the official `static.cdsb.com` article template. Used for the completed internship.
 
 The hero carousel uses distance fields generated from the original marks for an animated chrome material and continuous melt transitions. Encoded fields in `assets/metal/` are derived display assets, not new brand artwork. These are artistic treatments within a personal portfolio, not replacement brand assets. Each chapter states its relationship to Caesar. Caesar's signature is original generated artwork.

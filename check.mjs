@@ -11,7 +11,7 @@ import { liquidDistanceField } from './prepare-metal.mjs';
 
 test('public content, anchors, local assets and brand credits are complete', () => {
   for (const match of html.matchAll(/(?:href|src)="([^"?#]+)"/g)) {
-    if (!/^(https?:|data:)/.test(match[1])) assert.ok(existsSync(new URL(match[1].replace(/^\//, ''), import.meta.url)), match[1]);
+    if (!/^(https?:|data:|mailto:)/.test(match[1])) assert.ok(existsSync(new URL(match[1].replace(/^\//, ''), import.meta.url)), match[1]);
   }
   for (const match of html.matchAll(/href="#([^"]+)"/g)) assert.ok(html.includes(`id="${match[1]}"`), match[1]);
   for (const text of ['Caesar', 'adventurex.svg', 'redstar-wordmark.png', 'brand-intro', 'CTO of', 'STUDENT ENTREPRENEUR', 'https://makebook.xyz', 'https://x.com/Aiyakale', 'AI agent-native engine for building web games', 'LLM Research Intern', 'Game Design Intern', 'AI &amp; New Media Intern', 'Web3 Track winner.', 'AdventureX 2026.', 'EVM testnet prototype']) assert.ok(html.includes(text), text);

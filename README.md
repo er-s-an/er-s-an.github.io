@@ -33,7 +33,7 @@ After editing either source, run `python3 build-locales.py` and commit the gener
 
 ## Search metadata
 
-Each language has its own canonical URL, reciprocal `hreflang` links, localized titles and social metadata, and `ProfilePage` / `Person` structured data. The person has the names Jiachen Xie, 谢佳辰 and Caesar, with links to GitHub and X. The sitemap lists the two canonical language URLs; the root is the `x-default` entry and canonicals to English. Actual indexing and search performance must be checked in an owner-verified Search Console property.
+Each homepage has a canonical URL, reciprocal `hreflang` links, localized metadata, and `ProfilePage` and `Person` structured data. The root is the `x-default` entry and canonicals to English. The sitemap lists both homepages and the standalone research engineering portfolios at `/en/research-engineering/` and `/zh/research-engineering/`. Check indexing and search performance in an owner-verified Search Console property.
 
 ## Metal assets
 
