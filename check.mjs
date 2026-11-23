@@ -358,3 +358,15 @@ test('every public page has unique metadata, structured data and local targets',
   const sitemap = readFileSync(new URL('sitemap.xml', import.meta.url), 'utf8');
   for (const path of publicPages) assert.ok(sitemap.includes(`<loc>https://er-s-an.github.io/${path}/</loc>`), `sitemap: ${path}`);
 });
+
+
+test('case studies are complete in initial HTML without scripts', () => {
+  for (const slug of ['section9', 'kanshan', 'rag-anything-ingestion']) {
+    for (const language of ['en', 'zh']) {
+      const page = readFileSync(new URL(`${language}/work/${slug}/index.html`, import.meta.url), 'utf8');
+      assert.ok(!page.includes('<script src='), `${language}/${slug}: no script dependency`);
+      assert.equal((page.match(/class="case-section"/g) || []).length, 3, `${language}/${slug}: three sections`);
+      assert.ok(page.includes('class="case-method"'), `${language}/${slug}: method context`);
+    }
+  }
+});
