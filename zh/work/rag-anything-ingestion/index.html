@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG-Anything — 多模态文档摄入优化｜谢佳辰</title>
+  <meta name="description" content="谢佳辰已合并的 RAG-Anything PR：通过可选 packed extraction 减少多模态摄入调用，同时保持 source ID 可解析、删除与失败回退行为，并保留默认图语义。">
+  <link rel="canonical" href="https://er-s-an.github.io/zh/work/rag-anything-ingestion/">
+  <link rel="alternate" hreflang="en" href="https://er-s-an.github.io/en/work/rag-anything-ingestion/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://er-s-an.github.io/zh/work/rag-anything-ingestion/">
+  <meta property="og:title" content="RAG-Anything — 多模态文档摄入优化｜谢佳辰">
+  <meta property="og:description" content="谢佳辰已合并的 RAG-Anything PR：通过可选 packed extraction 减少多模态摄入调用，同时保持 source ID 可解析、删除与失败回退行为，并保留默认图语义。">
+  <meta property="og:url" content="https://er-s-an.github.io/zh/work/rag-anything-ingestion/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://er-s-an.github.io/assets/social-card.png">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css?v=agent-evaluation-cases-1">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "url": "https://er-s-an.github.io/zh/work/rag-anything-ingestion/", "name": "RAG-Anything — 多模态文档摄入优化｜谢佳辰", "description": "谢佳辰已合并的 RAG-Anything PR：通过可选 packed extraction 减少多模态摄入调用，同时保持 source ID 可解析、删除与失败回退行为，并保留默认图语义。", "inLanguage": "zh-Hans", "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Jiachen Xie", "item": "https://er-s-an.github.io/zh/"}, {"@type": "ListItem", "position": 2, "name": "作品", "item": "https://er-s-an.github.io/zh/#work"}, {"@type": "ListItem", "position": 3, "name": "RAG-Anything", "item": "https://er-s-an.github.io/zh/work/rag-anything-ingestion/"}]}, "mainEntity": {"@type": "SoftwareSourceCode", "name": "RAG-Anything", "description": "谢佳辰已合并的 RAG-Anything PR：通过可选 packed extraction 减少多模态摄入调用，同时保持 source ID 可解析、删除与失败回退行为，并保留默认图语义。", "url": "https://er-s-an.github.io/zh/work/rag-anything-ingestion/", "codeRepository": "https://github.com/HKUDS/RAG-Anything", "author": {"@id": "https://er-s-an.github.io/#person"}}}</script>
+</head>
+<body>
+  <header class="research-nav wrap">
+    <a class="text-link" href="/zh/research-engineering/">← 研究工程作品</a>
+    <a class="text-link" href="/en/work/rag-anything-ingestion/" lang="en">English</a>
+  </header>
+  <main class="case-profile wrap">
+    <p class="eyebrow">开源工程 · 多模态 RAG</p>
+    <h1>减少多模态摄入调用，也不悄悄改变图语义。</h1>
+    <p class="case-summary">在 HKUDS/RAG-Anything PR #453 中，我减少了多模态文档摄入时的模型调用放大，并在维护者评审中补齐 source 解析、删除和失败恢复。最终得到的是明确 opt-in 的效率路径，而不是对默认行为的暗改。</p>
+    <div class="research-links"><a class="text-link" href="https://github.com/HKUDS/RAG-Anything/pull/453">已合并 PR #453 ↗</a><a class="text-link" href="https://github.com/HKUDS/RAG-Anything">RAG-Anything 仓库 ↗</a></div>
+    <figure class="case-hero"><img src="/assets/case-studies/rag-ingestion.svg" width="1440" height="900" alt="legacy 与 packed 多模态摄入调用对比图"></figure>
+    <dl class="case-facts">
+      <div><dt>职责</dt><dd>方案设计、实现、回归覆盖、基准样例、维护者迭代</dd></div>
+      <div><dt>技术</dt><dd class="case-stack"><span class="skill-tag">Python</span><span class="skill-tag">LightRAG</span><span class="skill-tag">多模态 RAG</span><span class="skill-tag">pytest</span><span class="skill-tag">Ruff</span></dd></div>
+    </dl>
+    <section class="case-metrics" aria-label="关键结果"><div><strong>65→21</strong><span>样例 embedding 调用</span></div><div><strong>6→4</strong><span>样例文本模型调用</span></div><div><strong>1,283</strong><span>PR 版本通过测试</span></div></section>
+    <section class="case-section"><h2>问题是调用放大，不只是延迟</h2><p>Legacy 多模态摄入会对相关内容重复执行抽取与 embedding 调用。Packed extraction 将符合条件的 modal items 分组，减少调用放大，同时保留 legacy、per-item 和 skip 的明确行为。</p><p>公开的合成图像加双表格样例中，legacy 使用 65 次 embedding 和 6 次文本模型调用；packed 分别为 21 次和 4 次，视觉模型均为 1 次。</p></section><section class="case-section"><h2>评审暴露了更深的图生命周期问题</h2><p>维护者最初复现发现，用于图抽取的 pack ID 无法稳定解析到已注册 source chunks，影响图检索和文档清理；这不是调用次数基准能覆盖的问题。</p><p>修订版在抽取前注册 packs，保证公开插入与删除路径中的 source ID 可解析，使用真实 LightRAG stores 覆盖失败批次回退，并保留 legacy 为默认行为。</p></section><section class="case-section"><h2>有完整收据的上游改动</h2><p>最终 PR 通过 1,283 项测试、Ruff 0.6.4 和 Python 3.10–3.12 CI。Qwen3-VL 与 Qwen embedding 实测覆盖四种模式的插入、查询和公开删除。</p><p>维护者从要求修改转为批准，PR 于 2026 年 11 月 12 日合并。文档明确记录 packed 模式的检索候选与 belongs_to 取舍。</p></section>
+    <section class="case-method"><h2>基准范围</h2><p>调用数字来自一个合成功能样例，不是检索质量基准。Packed 为 opt-in；它会省略 belongs_to 关系并增加检索候选，在真实数据上启用前仍需评估。</p></section>
+  </main>
+</body>
+</html>

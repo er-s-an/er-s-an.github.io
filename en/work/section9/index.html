@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Section9 — Agent Evaluation Harness | Jiachen Xie</title>
+  <meta name="description" content="Section9 by Jiachen Xie: a paired evaluation harness for single-agent and multi-agent incident response, with task outcomes, latency, token usage, controlled execution, and independently checked evidence.">
+  <link rel="canonical" href="https://er-s-an.github.io/en/work/section9/">
+  <link rel="alternate" hreflang="en" href="https://er-s-an.github.io/en/work/section9/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://er-s-an.github.io/zh/work/section9/">
+  <meta property="og:title" content="Section9 — Agent Evaluation Harness | Jiachen Xie">
+  <meta property="og:description" content="Section9 by Jiachen Xie: a paired evaluation harness for single-agent and multi-agent incident response, with task outcomes, latency, token usage, controlled execution, and independently checked evidence.">
+  <meta property="og:url" content="https://er-s-an.github.io/en/work/section9/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://er-s-an.github.io/assets/social-card.png">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css?v=agent-evaluation-cases-1">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "url": "https://er-s-an.github.io/en/work/section9/", "name": "Section9 — Agent Evaluation Harness | Jiachen Xie", "description": "Section9 by Jiachen Xie: a paired evaluation harness for single-agent and multi-agent incident response, with task outcomes, latency, token usage, controlled execution, and independently checked evidence.", "inLanguage": "en", "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Jiachen Xie", "item": "https://er-s-an.github.io/en/"}, {"@type": "ListItem", "position": 2, "name": "Work", "item": "https://er-s-an.github.io/en/#work"}, {"@type": "ListItem", "position": 3, "name": "Section9", "item": "https://er-s-an.github.io/en/work/section9/"}]}, "mainEntity": {"@type": "SoftwareSourceCode", "name": "Section9", "description": "Section9 by Jiachen Xie: a paired evaluation harness for single-agent and multi-agent incident response, with task outcomes, latency, token usage, controlled execution, and independently checked evidence.", "url": "https://er-s-an.github.io/en/work/section9/", "codeRepository": "https://github.com/er-s-an/section9", "author": {"@id": "https://er-s-an.github.io/#person"}}}</script>
+</head>
+<body>
+  <header class="research-nav wrap">
+    <a class="text-link" href="/en/research-engineering/">← Research engineering</a>
+    <a class="text-link" href="/zh/work/section9/" lang="zh-Hans">简体中文</a>
+  </header>
+  <main class="case-profile wrap">
+    <p class="eyebrow">AGENT EVALUATION · INCIDENT RESPONSE</p>
+    <h1>An evaluation harness for agents that fix agents.</h1>
+    <p class="case-summary">Section9 connects runtime evidence, code, controlled execution, and business acceptance in one incident-response workflow. I built a paired showcase that compares single-agent and multi-agent runs without hiding failures or assuming that more agents win.</p>
+    <div class="research-links"><a class="text-link" href="https://github.com/er-s-an/section9">GitHub repository ↗</a><a class="text-link" href="https://github.com/er-s-an/section9/blob/main/docs/SHOWCASE_DELIVERY.md">Experiment delivery record ↗</a></div>
+    <figure class="case-hero"><img src="/assets/case-studies/section9-showcase.png" width="1440" height="900" alt="Section9 multi-agent incident-response showcase with live evidence"></figure>
+    <dl class="case-facts">
+      <div><dt>ROLE</dt><dd>System design, evaluation harness, backend, controlled execution, evidence UI</dd></div>
+      <div><dt>TECHNOLOGIES</dt><dd class="case-stack"><span class="skill-tag">Python</span><span class="skill-tag">TypeScript</span><span class="skill-tag">SQLite</span><span class="skill-tag">ReAct</span><span class="skill-tag">OpenTelemetry</span><span class="skill-tag">Langfuse</span></dd></div>
+    </dl>
+    <section class="case-metrics" aria-label="Key results"><div><strong>4</strong><span>controlled failure scenarios</span></div><div><strong>8</strong><span>final-version arm runs</span></div><div><strong>2</strong><span>independent arms per pair</span></div></section>
+    <section class="case-section"><h2>Evaluation built around business outcomes</h2><p>The harness pairs a single-agent baseline with a multi-agent arm under the same task specification. It records task status, wall-clock latency, token usage, unknown outcomes, and source identity instead of reducing success to a persuasive transcript.</p><p>Prompt, cost, loop, and composite failure scenarios each completed one paired closed-loop run on the final source version. The resulting eight arm runs preserve both successes and earlier failures.</p></section><section class="case-section"><h2>Controlled repair, not unbounded autonomy</h2><p>Section9 combines scoped grants, leases, fencing, cancellation, independent acceptance, and immutable run identities. A repair is evaluated against the affected business behavior after execution, while late responses and stale authority cannot quietly overwrite a newer run.</p><p>The read-only showcase projects real task events into an inspectable office and evidence drawers. The interface explains the system, but the underlying events and acceptance reports remain the source of truth.</p></section><section class="case-section"><h2>Evidence that survives scrutiny</h2><p>The final composite pair passed business acceptance on both arms: the single-agent baseline took 25.007 seconds and 5,338 tokens; the multi-agent arm took 31.905 seconds and 7,183 tokens. This is a recorded result, not a claim of multi-agent superiority.</p><p>OpenTelemetry and Langfuse traces, browser acceptance, source hashes, and raw run artifacts make the experiment inspectable end to end.</p></section>
+    <section class="case-method"><h2>Evaluation setup</h2><p>Four controlled scenarios have one normal pair each on the final source version. These are small, fixed-fixture experiments with remote model inference; they do not establish statistical stability or a general advantage for either arm.</p></section>
+  </main>
+</body>
+</html>

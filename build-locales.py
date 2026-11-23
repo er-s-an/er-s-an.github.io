@@ -116,6 +116,93 @@ def render(language):
     return result
 
 
+def render_case_studies():
+    template = (ROOT / "case-study-template.html").read_text()
+    studies = json.loads((ROOT / "case-studies.json").read_text())
+    generated = []
+    for study in studies.values():
+        for language in ("en", "zh"):
+            copy = study[language]
+            path = f"{language}/work/{study['slug']}"
+            canonical = f"{BASE}/{path}/"
+            other = "zh" if language == "en" else "en"
+            other_path = f"{other}/work/{study['slug']}"
+            links = "".join(
+                f'<a class="text-link" href="{html.escape(link["href"], quote=True)}">{html.escape(link["label"])} ↗</a>'
+                for link in copy["links"]
+            )
+            stack = "".join(f'<span class="skill-tag">{html.escape(item)}</span>' for item in copy["stack"])
+            metrics = "".join(
+                f'<div><strong>{html.escape(item["value"])}</strong><span>{html.escape(item["label"])}</span></div>'
+                for item in copy["metrics"]
+            )
+            sections = "".join(
+                '<section class="case-section">'
+                f'<h2>{html.escape(section["title"])}</h2>'
+                + "".join(f'<p>{html.escape(paragraph)}</p>' for paragraph in section["paragraphs"])
+                + '</section>'
+                for section in copy["sections"]
+            )
+            entity = {
+                "@type": "SoftwareSourceCode",
+                "name": copy["title"].split("—")[0].strip(),
+                "description": copy["description"],
+                "url": canonical,
+                "codeRepository": study["repository"],
+                "author": {"@id": f"{BASE}/#person"},
+            }
+            schema = {
+                "@context": "https://schema.org",
+                "@type": "WebPage",
+                "url": canonical,
+                "name": copy["title"],
+                "description": copy["description"],
+                "inLanguage": "zh-Hans" if language == "zh" else "en",
+                "breadcrumb": {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {"@type": "ListItem", "position": 1, "name": "Jiachen Xie", "item": f"{BASE}/{language}/"},
+                        {"@type": "ListItem", "position": 2, "name": "Work" if language == "en" else "作品", "item": f"{BASE}/{language}/#work"},
+                        {"@type": "ListItem", "position": 3, "name": entity["name"], "item": canonical},
+                    ],
+                },
+                "mainEntity": entity,
+            }
+            tokens = {
+                "lang": "zh-Hans" if language == "zh" else "en",
+                "title": copy["title"], "description": copy["description"],
+                "canonical": canonical,
+                "englishUrl": f"{BASE}/en/work/{study['slug']}/",
+                "chineseUrl": f"{BASE}/zh/work/{study['slug']}/",
+                "socialImage": f"{BASE}/assets/social-card.png",
+                "jsonLd": json.dumps(schema, ensure_ascii=False).replace("<", "\\u003c"),
+                "backHref": f"/{language}/research-engineering/",
+                "backLabel": "← Research engineering" if language == "en" else "← 研究工程作品",
+                "languageHref": f"/{other_path}/",
+                "languageLang": "zh-Hans" if language == "en" else "en",
+                "languageLabel": "简体中文" if language == "en" else "English",
+                "kicker": copy["kicker"], "headline": copy["headline"], "summary": copy["summary"],
+                "links": links,
+                "image": study["image"], "imageAlt": copy["imageAlt"],
+                "roleLabel": "ROLE" if language == "en" else "职责", "role": copy["role"],
+                "stackLabel": "TECHNOLOGIES" if language == "en" else "技术", "stack": stack,
+                "metricsLabel": "Key results" if language == "en" else "关键结果", "metrics": metrics,
+                "sections": sections, "methodTitle": copy["methodTitle"], "method": copy["method"],
+            }
+            output = template
+            for key, value in tokens.items():
+                replacement = value if key in {"links", "stack", "metrics", "sections", "jsonLd"} else html.escape(str(value), quote=True)
+                output = output.replace("{{" + key + "}}", replacement)
+            assert "{{" not in output, f"Unresolved case template token: {path}"
+            directory = ROOT / path
+            directory.mkdir(parents=True, exist_ok=True)
+            (directory / "index.html").write_text(output)
+            generated.append(path)
+    return generated
+
+
+PUBLIC_PAGES += tuple(render_case_studies())
+
 for language in ("en", "zh"):
     directory = ROOT / language
     directory.mkdir(exist_ok=True)

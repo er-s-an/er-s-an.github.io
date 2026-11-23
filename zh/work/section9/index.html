@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Section9 — Agent 评测与故障响应系统｜谢佳辰</title>
+  <meta name="description" content="谢佳辰的 Section9：面向单 Agent 与多 Agent 故障响应的配对评测系统，记录任务结果、延迟、Token、受控执行和独立验收证据。">
+  <link rel="canonical" href="https://er-s-an.github.io/zh/work/section9/">
+  <link rel="alternate" hreflang="en" href="https://er-s-an.github.io/en/work/section9/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://er-s-an.github.io/zh/work/section9/">
+  <meta property="og:title" content="Section9 — Agent 评测与故障响应系统｜谢佳辰">
+  <meta property="og:description" content="谢佳辰的 Section9：面向单 Agent 与多 Agent 故障响应的配对评测系统，记录任务结果、延迟、Token、受控执行和独立验收证据。">
+  <meta property="og:url" content="https://er-s-an.github.io/zh/work/section9/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://er-s-an.github.io/assets/social-card.png">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css?v=agent-evaluation-cases-1">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "url": "https://er-s-an.github.io/zh/work/section9/", "name": "Section9 — Agent 评测与故障响应系统｜谢佳辰", "description": "谢佳辰的 Section9：面向单 Agent 与多 Agent 故障响应的配对评测系统，记录任务结果、延迟、Token、受控执行和独立验收证据。", "inLanguage": "zh-Hans", "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Jiachen Xie", "item": "https://er-s-an.github.io/zh/"}, {"@type": "ListItem", "position": 2, "name": "作品", "item": "https://er-s-an.github.io/zh/#work"}, {"@type": "ListItem", "position": 3, "name": "Section9", "item": "https://er-s-an.github.io/zh/work/section9/"}]}, "mainEntity": {"@type": "SoftwareSourceCode", "name": "Section9", "description": "谢佳辰的 Section9：面向单 Agent 与多 Agent 故障响应的配对评测系统，记录任务结果、延迟、Token、受控执行和独立验收证据。", "url": "https://er-s-an.github.io/zh/work/section9/", "codeRepository": "https://github.com/er-s-an/section9", "author": {"@id": "https://er-s-an.github.io/#person"}}}</script>
+</head>
+<body>
+  <header class="research-nav wrap">
+    <a class="text-link" href="/zh/research-engineering/">← 研究工程作品</a>
+    <a class="text-link" href="/en/work/section9/" lang="en">English</a>
+  </header>
+  <main class="case-profile wrap">
+    <p class="eyebrow">AGENT 评测 · 故障响应</p>
+    <h1>让修复 Agent 的 Agent，也接受可核验的评测。</h1>
+    <p class="case-summary">Section9 把运行证据、代码、受控执行和业务验收接成一条故障响应工作流。我实现了同案配对展示，对比单 Agent 与多 Agent 的任务结果，同时保留失败，不预设 Agent 越多越好。</p>
+    <div class="research-links"><a class="text-link" href="https://github.com/er-s-an/section9">GitHub 仓库 ↗</a><a class="text-link" href="https://github.com/er-s-an/section9/blob/main/docs/SHOWCASE_DELIVERY.md">实验交付记录 ↗</a></div>
+    <figure class="case-hero"><img src="/assets/case-studies/section9-showcase.png" width="1440" height="900" alt="Section9 多 Agent 故障响应展示与实时证据"></figure>
+    <dl class="case-facts">
+      <div><dt>职责</dt><dd>系统设计、评测 Harness、后端、受控执行、证据界面</dd></div>
+      <div><dt>技术</dt><dd class="case-stack"><span class="skill-tag">Python</span><span class="skill-tag">TypeScript</span><span class="skill-tag">SQLite</span><span class="skill-tag">ReAct</span><span class="skill-tag">OpenTelemetry</span><span class="skill-tag">Langfuse</span></dd></div>
+    </dl>
+    <section class="case-metrics" aria-label="关键结果"><div><strong>4</strong><span>固定故障场景</span></div><div><strong>8</strong><span>最终版本 arm run</span></div><div><strong>2</strong><span>每组独立对照 arm</span></div></section>
+    <section class="case-section"><h2>以业务结果为中心的评测</h2><p>Harness 在同一任务规格下配对单 Agent 基线与多 Agent arm，记录任务状态、实际耗时、Token、未知结果和源码身份，而不是凭一段看似合理的对话判断成功。</p><p>Prompt、成本、循环与复合故障四类场景都在最终源码版本上完成了一组配对闭环，共 8 次 arm run；早期失败也保留在证据中。</p></section><section class="case-section"><h2>受控修复，而不是无限自治</h2><p>Section9 实现了权限授予、租约、fencing、取消、独立验收和不可变运行身份。修复执行后要重新检查受影响的业务行为，迟到响应和过期权限不能覆盖更新的运行。</p><p>只读展屏把真实任务事件投影为可检查的办公室与证据抽屉。界面负责解释系统，原始事件和验收报告才是事实来源。</p></section><section class="case-section"><h2>经得起追问的证据链</h2><p>最终复合故障组中，两侧都通过业务验收：单 Agent 用时 25.007 秒、消耗 5,338 Token；多 Agent 用时 31.905 秒、消耗 7,183 Token。这是实测记录，不是多 Agent 更优的结论。</p><p>OpenTelemetry、Langfuse、浏览器验收、源码哈希和原始运行文件，让实验从界面到执行证据都能被复查。</p></section>
+    <section class="case-method"><h2>实验设置</h2><p>最终版本的四类固定场景各有一组正常配对，使用远程模型推理。样本量不足以证明统计稳定性或任何一种架构的普遍优势。</p></section>
+  </main>
+</body>
+</html>

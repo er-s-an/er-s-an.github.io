@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}">
+  <link rel="canonical" href="{{canonical}}">
+  <link rel="alternate" hreflang="en" href="{{englishUrl}}">
+  <link rel="alternate" hreflang="zh-Hans" href="{{chineseUrl}}">
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:url" content="{{canonical}}">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="{{socialImage}}">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css?v=agent-evaluation-cases-1">
+  <script type="application/ld+json">{{jsonLd}}</script>
+</head>
+<body>
+  <header class="research-nav wrap">
+    <a class="text-link" href="{{backHref}}">{{backLabel}}</a>
+    <a class="text-link" href="{{languageHref}}" lang="{{languageLang}}">{{languageLabel}}</a>
+  </header>
+  <main class="case-profile wrap">
+    <p class="eyebrow">{{kicker}}</p>
+    <h1>{{headline}}</h1>
+    <p class="case-summary">{{summary}}</p>
+    <div class="research-links">{{links}}</div>
+    <figure class="case-hero"><img src="{{image}}" width="1440" height="900" alt="{{imageAlt}}"></figure>
+    <dl class="case-facts">
+      <div><dt>{{roleLabel}}</dt><dd>{{role}}</dd></div>
+      <div><dt>{{stackLabel}}</dt><dd class="case-stack">{{stack}}</dd></div>
+    </dl>
+    <section class="case-metrics" aria-label="{{metricsLabel}}">{{metrics}}</section>
+    {{sections}}
+    <section class="case-method"><h2>{{methodTitle}}</h2><p>{{method}}</p></section>
+  </main>
+</body>
+</html>

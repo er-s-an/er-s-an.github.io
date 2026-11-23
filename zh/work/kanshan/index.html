@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>看山任意门 — 故事编译游戏引擎｜谢佳辰</title>
+  <meta name="description" content="谢佳辰团队的看山任意门：故事编译管线、StoryPackage 结构校验、确定性游戏状态规则与可玩浏览器运行时，让 LLM 专注表达而不篡改世界事实。">
+  <link rel="canonical" href="https://er-s-an.github.io/zh/work/kanshan/">
+  <link rel="alternate" hreflang="en" href="https://er-s-an.github.io/en/work/kanshan/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://er-s-an.github.io/zh/work/kanshan/">
+  <meta property="og:title" content="看山任意门 — 故事编译游戏引擎｜谢佳辰">
+  <meta property="og:description" content="谢佳辰团队的看山任意门：故事编译管线、StoryPackage 结构校验、确定性游戏状态规则与可玩浏览器运行时，让 LLM 专注表达而不篡改世界事实。">
+  <meta property="og:url" content="https://er-s-an.github.io/zh/work/kanshan/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://er-s-an.github.io/assets/social-card.png">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css?v=agent-evaluation-cases-1">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "url": "https://er-s-an.github.io/zh/work/kanshan/", "name": "看山任意门 — 故事编译游戏引擎｜谢佳辰", "description": "谢佳辰团队的看山任意门：故事编译管线、StoryPackage 结构校验、确定性游戏状态规则与可玩浏览器运行时，让 LLM 专注表达而不篡改世界事实。", "inLanguage": "zh-Hans", "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Jiachen Xie", "item": "https://er-s-an.github.io/zh/"}, {"@type": "ListItem", "position": 2, "name": "作品", "item": "https://er-s-an.github.io/zh/#work"}, {"@type": "ListItem", "position": 3, "name": "看山任意门", "item": "https://er-s-an.github.io/zh/work/kanshan/"}]}, "mainEntity": {"@type": "SoftwareSourceCode", "name": "看山任意门", "description": "谢佳辰团队的看山任意门：故事编译管线、StoryPackage 结构校验、确定性游戏状态规则与可玩浏览器运行时，让 LLM 专注表达而不篡改世界事实。", "url": "https://er-s-an.github.io/zh/work/kanshan/", "codeRepository": "https://github.com/er-s-an/kanshanOPENdoor", "author": {"@id": "https://er-s-an.github.io/#person"}}}</script>
+</head>
+<body>
+  <header class="research-nav wrap">
+    <a class="text-link" href="/zh/research-engineering/">← 研究工程作品</a>
+    <a class="text-link" href="/en/work/kanshan/" lang="en">English</a>
+  </header>
+  <main class="case-profile wrap">
+    <p class="eyebrow">游戏环境 · 创作工具</p>
+    <h1>把故事编译成规则一致、真正可玩的游戏世界。</h1>
+    <p class="case-summary">《看山任意门》把叙事原文编译成结构化剧本杀。团队把生成式表达与确定性规则分开，让玩家搜证、呈证、对峙和走向结局时，模型不能随手改写世界真相。</p>
+    <div class="research-links"><a class="text-link" href="https://github.com/er-s-an/kanshanOPENdoor">GitHub 仓库 ↗</a><a class="text-link" href="https://github.com/er-s-an/kanshanOPENdoor/blob/codex/initial-upload/GDD.md">游戏设计文档 ↗</a><a class="text-link" href="https://github.com/er-s-an/kanshanOPENdoor/blob/codex/initial-upload/STATUS.md">当前项目状态 ↗</a></div>
+    <figure class="case-hero"><img src="/assets/case-studies/kanshan-hall.jpg" width="1440" height="900" alt="看山任意门的门厅美术图"></figure>
+    <dl class="case-facts">
+      <div><dt>职责</dt><dd>故事编译架构、编译管线、游戏规则、浏览器运行时</dd></div>
+      <div><dt>技术</dt><dd class="case-stack"><span class="skill-tag">TypeScript</span><span class="skill-tag">React</span><span class="skill-tag">Node.js</span><span class="skill-tag">LLM APIs</span><span class="skill-tag">StoryPackage</span><span class="skill-tag">确定性 reducer</span></dd></div>
+    </dl>
+    <section class="case-metrics" aria-label="关键结果"><div><strong>4</strong><span>编译阶段</span></div><div><strong>31</strong><span>旗舰故事幕数</span></div><div><strong>S2</strong><span>知乎黑客松全国决赛</span></div></section>
+    <section class="case-section"><h2>先有编译器，再有运行时</h2><p>管线依次经过 analyze、design、compile、validate。系统不是让模型一边编故事一边生成游戏规则，而是先产出可校验的 StoryPackage，再交给浏览器运行时。</p><p>旗舰《蓝血》切片包含 31 幕，另有《西游》和《近视眼》材料。共享契约连接编译器、本地 Studio 与游戏运行时。</p></section><section class="case-section"><h2>事实确定，表达自由</h2><p>线索变量、结构化呈证、游戏状态和结局由确定性规则控制。LLM 负责表达与对话，通过改写式提示词和出戏检测参与体验，而没有修改事实的权限。</p><p>这种分工也适合研究长程 Agent：系统既能保留可检查状态，又能提供灵活的自然语言交互。</p></section><section class="case-section"><h2>让玩法长在自己的媒介里</h2><p>展示作品改编自知乎盐选故事，调查、对话、证据与最终指认都发生在知乎风格界面里，高潮 Boss 战就在评论区。</p><p>项目入围知乎黑客松 S2 全国总决赛。可玩系统还包括门厅、移动端控制、回归测试和沙箱化浏览器体验。</p></section>
+    <section class="case-method"><h2>项目背景</h2><p>看山是团队项目和黑客松决赛作品，不宣称已经是生产级游戏平台。架构与可玩证据公开在仓库中，故事和平台素材遵循文档记录的权利边界。</p></section>
+  </main>
+</body>
+</html>

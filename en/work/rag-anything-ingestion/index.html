@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG-Anything — Multimodal Ingestion | Jiachen Xie</title>
+  <meta name="description" content="Jiachen Xie&#x27;s merged RAG-Anything PR: reduce multimodal ingestion calls with opt-in packed extraction while preserving resolvable source IDs, deletion, fallback behavior, and legacy graph semantics.">
+  <link rel="canonical" href="https://er-s-an.github.io/en/work/rag-anything-ingestion/">
+  <link rel="alternate" hreflang="en" href="https://er-s-an.github.io/en/work/rag-anything-ingestion/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://er-s-an.github.io/zh/work/rag-anything-ingestion/">
+  <meta property="og:title" content="RAG-Anything — Multimodal Ingestion | Jiachen Xie">
+  <meta property="og:description" content="Jiachen Xie&#x27;s merged RAG-Anything PR: reduce multimodal ingestion calls with opt-in packed extraction while preserving resolvable source IDs, deletion, fallback behavior, and legacy graph semantics.">
+  <meta property="og:url" content="https://er-s-an.github.io/en/work/rag-anything-ingestion/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://er-s-an.github.io/assets/social-card.png">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css?v=agent-evaluation-cases-1">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "url": "https://er-s-an.github.io/en/work/rag-anything-ingestion/", "name": "RAG-Anything — Multimodal Ingestion | Jiachen Xie", "description": "Jiachen Xie's merged RAG-Anything PR: reduce multimodal ingestion calls with opt-in packed extraction while preserving resolvable source IDs, deletion, fallback behavior, and legacy graph semantics.", "inLanguage": "en", "breadcrumb": {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Jiachen Xie", "item": "https://er-s-an.github.io/en/"}, {"@type": "ListItem", "position": 2, "name": "Work", "item": "https://er-s-an.github.io/en/#work"}, {"@type": "ListItem", "position": 3, "name": "RAG-Anything", "item": "https://er-s-an.github.io/en/work/rag-anything-ingestion/"}]}, "mainEntity": {"@type": "SoftwareSourceCode", "name": "RAG-Anything", "description": "Jiachen Xie's merged RAG-Anything PR: reduce multimodal ingestion calls with opt-in packed extraction while preserving resolvable source IDs, deletion, fallback behavior, and legacy graph semantics.", "url": "https://er-s-an.github.io/en/work/rag-anything-ingestion/", "codeRepository": "https://github.com/HKUDS/RAG-Anything", "author": {"@id": "https://er-s-an.github.io/#person"}}}</script>
+</head>
+<body>
+  <header class="research-nav wrap">
+    <a class="text-link" href="/en/research-engineering/">← Research engineering</a>
+    <a class="text-link" href="/zh/work/rag-anything-ingestion/" lang="zh-Hans">简体中文</a>
+  </header>
+  <main class="case-profile wrap">
+    <p class="eyebrow">OPEN SOURCE · MULTIMODAL RAG</p>
+    <h1>Cutting multimodal ingestion calls without silently changing graph semantics.</h1>
+    <p class="case-summary">In HKUDS/RAG-Anything PR #453, I reduced model-call amplification during multimodal document ingestion and worked through maintainer review to protect source resolution, deletion, and failure recovery. The result is an opt-in efficiency path, not a hidden change to default behavior.</p>
+    <div class="research-links"><a class="text-link" href="https://github.com/HKUDS/RAG-Anything/pull/453">Merged PR #453 ↗</a><a class="text-link" href="https://github.com/HKUDS/RAG-Anything">RAG-Anything repository ↗</a></div>
+    <figure class="case-hero"><img src="/assets/case-studies/rag-ingestion.svg" width="1440" height="900" alt="Diagram comparing legacy and packed multimodal ingestion calls"></figure>
+    <dl class="case-facts">
+      <div><dt>ROLE</dt><dd>Design, implementation, regression coverage, benchmark, maintainer iteration</dd></div>
+      <div><dt>TECHNOLOGIES</dt><dd class="case-stack"><span class="skill-tag">Python</span><span class="skill-tag">LightRAG</span><span class="skill-tag">Multimodal RAG</span><span class="skill-tag">pytest</span><span class="skill-tag">Ruff</span></dd></div>
+    </dl>
+    <section class="case-metrics" aria-label="Key results"><div><strong>65→21</strong><span>embedding calls on the fixture</span></div><div><strong>6→4</strong><span>text-model calls on the fixture</span></div><div><strong>1,283</strong><span>tests passed on the PR head</span></div></section>
+    <section class="case-section"><h2>The problem was amplification, not just latency</h2><p>Legacy multimodal ingestion could repeatedly send related content through extraction and embedding calls. Packed extraction groups eligible modal items to reduce that amplification while leaving legacy, per-item, and skip behaviors explicit.</p><p>On the public synthetic image-and-two-table fixture, legacy used 65 embedding calls and six text-model calls; packed used 21 and four respectively. Vision-model use remained one call.</p></section><section class="case-section"><h2>Review exposed a deeper graph-lifecycle issue</h2><p>An initial reviewer reproduction found that pack IDs used for graph extraction were not consistently resolvable to registered source chunks. That affected graph retrieval and document cleanup, beyond what a call-count benchmark could reveal.</p><p>The revision registered packs before extraction, preserved resolvable source IDs through public insertion and deletion, covered failed-batch fallback with real LightRAG stores, and kept legacy extraction as the default.</p></section><section class="case-section"><h2>An upstream change with receipts</h2><p>The final PR passed 1,283 tests, Ruff 0.6.4 checks, and Python 3.10–3.12 CI. Live Qwen3-VL and Qwen embedding smoke checks covered insertion, query, public deletion, and all four modes.</p><p>The maintainer moved from requesting changes to approving the revised PR, which merged on 12 November 2026. The documentation explicitly records packed-mode retrieval and belongs_to trade-offs.</p></section>
+    <section class="case-method"><h2>Benchmark scope</h2><p>The call-count figures come from one synthetic functional fixture, not a retrieval-quality benchmark. Packed mode is opt-in; representative data should be evaluated before enabling it because it omits belongs_to relations and adds retrieval candidates.</p></section>
+  </main>
+</body>
+</html>

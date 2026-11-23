@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title description">
+  <title id="title">Legacy and packed multimodal ingestion call comparison</title>
+  <desc id="description">On a synthetic image and two-table functional fixture, packed extraction reduced embedding calls from 65 to 21 and text model calls from 6 to 4.</desc>
+  <rect width="1440" height="900" fill="#f5f7fb"/>
+  <text x="90" y="100" fill="#2143ed" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="4">MULTIMODAL INGESTION / PR #453</text>
+  <text x="90" y="168" fill="#171724" font-family="Arial, sans-serif" font-size="48" font-weight="700">Fewer calls. Explicit graph semantics.</text>
+  <rect x="90" y="230" width="580" height="380" rx="28" fill="#ffffff" stroke="#ccd3df" stroke-width="2"/>
+  <rect x="770" y="230" width="580" height="380" rx="28" fill="#2143ed"/>
+  <text x="140" y="300" fill="#656b78" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="3">LEGACY</text>
+  <text x="820" y="300" fill="#d8ff52" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="3">PACKED / OPT-IN</text>
+  <text x="140" y="420" fill="#171724" font-family="Arial, sans-serif" font-size="92" font-weight="700">65</text>
+  <text x="140" y="465" fill="#454551" font-family="Arial, sans-serif" font-size="26">embedding calls</text>
+  <text x="400" y="420" fill="#171724" font-family="Arial, sans-serif" font-size="92" font-weight="700">6</text>
+  <text x="400" y="465" fill="#454551" font-family="Arial, sans-serif" font-size="26">text model calls</text>
+  <text x="820" y="420" fill="#ffffff" font-family="Arial, sans-serif" font-size="92" font-weight="700">21</text>
+  <text x="820" y="465" fill="#e3e8ff" font-family="Arial, sans-serif" font-size="26">embedding calls</text>
+  <text x="1080" y="420" fill="#ffffff" font-family="Arial, sans-serif" font-size="92" font-weight="700">4</text>
+  <text x="1080" y="465" fill="#e3e8ff" font-family="Arial, sans-serif" font-size="26">text model calls</text>
+  <line x1="140" y1="525" x2="620" y2="525" stroke="#e2e6ed" stroke-width="2"/>
+  <line x1="820" y1="525" x2="1300" y2="525" stroke="#7287ed" stroke-width="2"/>
+  <text x="140" y="570" fill="#656b78" font-family="Arial, sans-serif" font-size="22">1 vision model call</text>
+  <text x="820" y="570" fill="#ffffff" font-family="Arial, sans-serif" font-size="22">1 vision model call</text>
+  <rect x="90" y="680" width="1260" height="100" rx="22" fill="#171724"/>
+  <text x="140" y="742" fill="#d8ff52" font-family="Arial, sans-serif" font-size="25" font-weight="700">Resolvable source IDs</text>
+  <text x="515" y="742" fill="#ffffff" font-family="Arial, sans-serif" font-size="25">Public deletion + failed-batch fallback</text>
+  <text x="1090" y="742" fill="#ffffff" font-family="Arial, sans-serif" font-size="25">Legacy default</text>
+  <text x="90" y="840" fill="#656b78" font-family="Arial, sans-serif" font-size="22">Synthetic image + two-table functional fixture · not a retrieval-quality benchmark</text>
+</svg>

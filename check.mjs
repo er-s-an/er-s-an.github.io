@@ -314,3 +314,47 @@ test('scroll transforms update together and are cleared when motion stops', asyn
   await s.advance(30);
   assert.equal(s.scenes[0].style['--scroll-progress'], undefined);
 });
+
+
+const publicPages = [
+  'en', 'zh', 'en/research-engineering', 'zh/research-engineering',
+  'en/work/section9', 'zh/work/section9',
+  'en/work/kanshan', 'zh/work/kanshan',
+  'en/work/rag-anything-ingestion', 'zh/work/rag-anything-ingestion',
+];
+
+test('every public page has unique metadata, structured data and local targets', () => {
+  const titles = new Set();
+  const descriptions = new Set();
+  for (const path of publicPages) {
+    const page = readFileSync(new URL(`${path}/index.html`, import.meta.url), 'utf8');
+    const language = path.startsWith('zh/') || path === 'zh' ? 'zh-Hans' : 'en';
+    const canonical = `https://er-s-an.github.io/${path}/`;
+    const title = page.match(/<title[^>]*>([^<]+)<\/title>/)?.[1];
+    const description = page.match(/<meta name="description"[^>]*content="([^"]+)"/)?.[1];
+    assert.ok(title?.includes('Jiachen Xie') || title?.includes('谢佳辰'), `${path}: identity in title`);
+    assert.ok(description && description.length >= 70, `${path}: substantive description`);
+    assert.ok(!titles.has(title), `${path}: unique title`);
+    assert.ok(!descriptions.has(description), `${path}: unique description`);
+    titles.add(title);
+    descriptions.add(description);
+    assert.ok(page.includes(`<html lang="${language}">`), `${path}: language`);
+    assert.ok(page.includes(`<link rel="canonical" href="${canonical}">`), `${path}: canonical`);
+    assert.equal((page.match(/<h1\b/g) || []).length, 1, `${path}: one H1`);
+    assert.ok(page.includes('hreflang="en"'), `${path}: English alternate`);
+    assert.ok(page.includes('hreflang="zh-Hans"'), `${path}: Chinese alternate`);
+    for (const match of page.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      const data = JSON.parse(match[1]);
+      assert.equal(data['@context'], 'https://schema.org', `${path}: schema context`);
+    }
+    for (const match of page.matchAll(/(?:href|src)="([^"?#]+)"/g)) {
+      const target = match[1];
+      if (!/^(https?:|data:|mailto:|#)/.test(target)) {
+        assert.ok(target.startsWith('/'), `${path}: root-relative target ${target}`);
+        assert.ok(existsSync(new URL(target.replace(/^\//, ''), import.meta.url)), `${path}: ${target}`);
+      }
+    }
+  }
+  const sitemap = readFileSync(new URL('sitemap.xml', import.meta.url), 'utf8');
+  for (const path of publicPages) assert.ok(sitemap.includes(`<loc>https://er-s-an.github.io/${path}/</loc>`), `sitemap: ${path}`);
+});

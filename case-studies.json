@@ -1,0 +1,131 @@
+{
+  "section9": {
+    "slug": "section9",
+    "repository": "https://github.com/er-s-an/section9",
+    "image": "/assets/case-studies/section9-showcase.png",
+    "en": {
+      "title": "Section9 — Agent Evaluation Harness | Jiachen Xie",
+      "description": "Section9 by Jiachen Xie: a paired evaluation harness for single-agent and multi-agent incident response, with task outcomes, latency, token usage, controlled execution, and independently checked evidence.",
+      "kicker": "AGENT EVALUATION · INCIDENT RESPONSE",
+      "headline": "An evaluation harness for agents that fix agents.",
+      "summary": "Section9 connects runtime evidence, code, controlled execution, and business acceptance in one incident-response workflow. I built a paired showcase that compares single-agent and multi-agent runs without hiding failures or assuming that more agents win.",
+      "role": "System design, evaluation harness, backend, controlled execution, evidence UI",
+      "stack": ["Python", "TypeScript", "SQLite", "ReAct", "OpenTelemetry", "Langfuse"],
+      "imageAlt": "Section9 multi-agent incident-response showcase with live evidence",
+      "metrics": [{"value":"4","label":"controlled failure scenarios"},{"value":"8","label":"final-version arm runs"},{"value":"2","label":"independent arms per pair"}],
+      "sections": [
+        {"title":"Evaluation built around business outcomes","paragraphs":["The harness pairs a single-agent baseline with a multi-agent arm under the same task specification. It records task status, wall-clock latency, token usage, unknown outcomes, and source identity instead of reducing success to a persuasive transcript.","Prompt, cost, loop, and composite failure scenarios each completed one paired closed-loop run on the final source version. The resulting eight arm runs preserve both successes and earlier failures."]},
+        {"title":"Controlled repair, not unbounded autonomy","paragraphs":["Section9 combines scoped grants, leases, fencing, cancellation, independent acceptance, and immutable run identities. A repair is evaluated against the affected business behavior after execution, while late responses and stale authority cannot quietly overwrite a newer run.","The read-only showcase projects real task events into an inspectable office and evidence drawers. The interface explains the system, but the underlying events and acceptance reports remain the source of truth."]},
+        {"title":"Evidence that survives scrutiny","paragraphs":["The final composite pair passed business acceptance on both arms: the single-agent baseline took 25.007 seconds and 5,338 tokens; the multi-agent arm took 31.905 seconds and 7,183 tokens. This is a recorded result, not a claim of multi-agent superiority.","OpenTelemetry and Langfuse traces, browser acceptance, source hashes, and raw run artifacts make the experiment inspectable end to end."]}
+      ],
+      "methodTitle": "Evaluation setup",
+      "method": "Four controlled scenarios have one normal pair each on the final source version. These are small, fixed-fixture experiments with remote model inference; they do not establish statistical stability or a general advantage for either arm.",
+      "links": [{"label":"GitHub repository","href":"https://github.com/er-s-an/section9"},{"label":"Experiment delivery record","href":"https://github.com/er-s-an/section9/blob/main/docs/SHOWCASE_DELIVERY.md"}]
+    },
+    "zh": {
+      "title": "Section9 — Agent 评测与故障响应系统｜谢佳辰",
+      "description": "谢佳辰的 Section9：面向单 Agent 与多 Agent 故障响应的配对评测系统，记录任务结果、延迟、Token、受控执行和独立验收证据。",
+      "kicker": "AGENT 评测 · 故障响应",
+      "headline": "让修复 Agent 的 Agent，也接受可核验的评测。",
+      "summary": "Section9 把运行证据、代码、受控执行和业务验收接成一条故障响应工作流。我实现了同案配对展示，对比单 Agent 与多 Agent 的任务结果，同时保留失败，不预设 Agent 越多越好。",
+      "role": "系统设计、评测 Harness、后端、受控执行、证据界面",
+      "stack": ["Python", "TypeScript", "SQLite", "ReAct", "OpenTelemetry", "Langfuse"],
+      "imageAlt": "Section9 多 Agent 故障响应展示与实时证据",
+      "metrics": [{"value":"4","label":"固定故障场景"},{"value":"8","label":"最终版本 arm run"},{"value":"2","label":"每组独立对照 arm"}],
+      "sections": [
+        {"title":"以业务结果为中心的评测","paragraphs":["Harness 在同一任务规格下配对单 Agent 基线与多 Agent arm，记录任务状态、实际耗时、Token、未知结果和源码身份，而不是凭一段看似合理的对话判断成功。","Prompt、成本、循环与复合故障四类场景都在最终源码版本上完成了一组配对闭环，共 8 次 arm run；早期失败也保留在证据中。"]},
+        {"title":"受控修复，而不是无限自治","paragraphs":["Section9 实现了权限授予、租约、fencing、取消、独立验收和不可变运行身份。修复执行后要重新检查受影响的业务行为，迟到响应和过期权限不能覆盖更新的运行。","只读展屏把真实任务事件投影为可检查的办公室与证据抽屉。界面负责解释系统，原始事件和验收报告才是事实来源。"]},
+        {"title":"经得起追问的证据链","paragraphs":["最终复合故障组中，两侧都通过业务验收：单 Agent 用时 25.007 秒、消耗 5,338 Token；多 Agent 用时 31.905 秒、消耗 7,183 Token。这是实测记录，不是多 Agent 更优的结论。","OpenTelemetry、Langfuse、浏览器验收、源码哈希和原始运行文件，让实验从界面到执行证据都能被复查。"]}
+      ],
+      "methodTitle": "实验设置",
+      "method": "最终版本的四类固定场景各有一组正常配对，使用远程模型推理。样本量不足以证明统计稳定性或任何一种架构的普遍优势。",
+      "links": [{"label":"GitHub 仓库","href":"https://github.com/er-s-an/section9"},{"label":"实验交付记录","href":"https://github.com/er-s-an/section9/blob/main/docs/SHOWCASE_DELIVERY.md"}]
+    }
+  },
+  "kanshan": {
+    "slug": "kanshan",
+    "repository": "https://github.com/er-s-an/kanshanOPENdoor",
+    "image": "/assets/case-studies/kanshan-hall.jpg",
+    "en": {
+      "title": "Kanshan — Story-to-Game Engine | Jiachen Xie",
+      "description": "Kanshan Anywhere Door by Jiachen Xie and team: a story-to-game compiler, validated StoryPackage contract, deterministic game-state rules, and playable browser runtime with LLMs confined to expression.",
+      "kicker": "GAME ENVIRONMENTS · CREATIVE TOOLS",
+      "headline": "Turning stories into playable, rule-consistent game worlds.",
+      "summary": "Kanshan Anywhere Door compiles narrative source material into a structured mystery game. Our team separated generative expression from deterministic rules so players can investigate, present evidence, and reach outcomes without the model rewriting the truth of the world.",
+      "role": "Story-to-game architecture, compiler pipeline, game rules, browser runtime",
+      "stack": ["TypeScript", "React", "Node.js", "LLM APIs", "StoryPackage", "Deterministic reducer"],
+      "imageAlt": "Kanshan Anywhere Door portal hall artwork",
+      "metrics": [{"value":"4","label":"compiler stages"},{"value":"31","label":"flagship story scenes"},{"value":"S2","label":"Zhihu Hackathon national finalist"}],
+      "sections": [
+        {"title":"A compiler before a runtime","paragraphs":["The pipeline moves through analyze, design, compile, and validate. Instead of streaming an improvised game directly from a model, it produces a structured StoryPackage that can be checked before the browser runtime consumes it.","The flagship Blue Blood slice contains 31 scenes, alongside Journey to the West and Myopic playable material. Shared contracts connect the compiler, local studio, and game runtime."]},
+        {"title":"Deterministic truth, generative expression","paragraphs":["Clue variables, structured evidence presentation, game state, and endings are governed by deterministic rules. LLM output is used for expression and dialogue, with rewriting prompts and out-of-character detection rather than authority over facts.","This separation creates a useful environment for studying long-horizon agent behavior: the system can preserve inspectable state while still allowing flexible natural-language interaction."]},
+        {"title":"A game built around its medium","paragraphs":["The showcase is a single-player mystery adapted from Zhihu Yanxuan stories. Investigation, dialogue, evidence, and the final accusation take place inside a Zhihu-style interface, including a comment-thread boss encounter.","The project reached the national finals of Zhihu Hackathon S2. The playable system also includes a portal hall, mobile controls, regression tests, and a sandboxed browser experience."]}
+      ],
+      "methodTitle": "Project context",
+      "method": "Kanshan is a team project and hackathon finalist, not a claim of a production game platform. The architecture and playable evidence are public in the repository; story and platform assets retain their documented rights boundaries.",
+      "links": [{"label":"GitHub repository","href":"https://github.com/er-s-an/kanshanOPENdoor"},{"label":"Game design document","href":"https://github.com/er-s-an/kanshanOPENdoor/blob/codex/initial-upload/GDD.md"},{"label":"Current project status","href":"https://github.com/er-s-an/kanshanOPENdoor/blob/codex/initial-upload/STATUS.md"}]
+    },
+    "zh": {
+      "title": "看山任意门 — 故事编译游戏引擎｜谢佳辰",
+      "description": "谢佳辰团队的看山任意门：故事编译管线、StoryPackage 结构校验、确定性游戏状态规则与可玩浏览器运行时，让 LLM 专注表达而不篡改世界事实。",
+      "kicker": "游戏环境 · 创作工具",
+      "headline": "把故事编译成规则一致、真正可玩的游戏世界。",
+      "summary": "《看山任意门》把叙事原文编译成结构化剧本杀。团队把生成式表达与确定性规则分开，让玩家搜证、呈证、对峙和走向结局时，模型不能随手改写世界真相。",
+      "role": "故事编译架构、编译管线、游戏规则、浏览器运行时",
+      "stack": ["TypeScript", "React", "Node.js", "LLM APIs", "StoryPackage", "确定性 reducer"],
+      "imageAlt": "看山任意门的门厅美术图",
+      "metrics": [{"value":"4","label":"编译阶段"},{"value":"31","label":"旗舰故事幕数"},{"value":"S2","label":"知乎黑客松全国决赛"}],
+      "sections": [
+        {"title":"先有编译器，再有运行时","paragraphs":["管线依次经过 analyze、design、compile、validate。系统不是让模型一边编故事一边生成游戏规则，而是先产出可校验的 StoryPackage，再交给浏览器运行时。","旗舰《蓝血》切片包含 31 幕，另有《西游》和《近视眼》材料。共享契约连接编译器、本地 Studio 与游戏运行时。"]},
+        {"title":"事实确定，表达自由","paragraphs":["线索变量、结构化呈证、游戏状态和结局由确定性规则控制。LLM 负责表达与对话，通过改写式提示词和出戏检测参与体验，而没有修改事实的权限。","这种分工也适合研究长程 Agent：系统既能保留可检查状态，又能提供灵活的自然语言交互。"]},
+        {"title":"让玩法长在自己的媒介里","paragraphs":["展示作品改编自知乎盐选故事，调查、对话、证据与最终指认都发生在知乎风格界面里，高潮 Boss 战就在评论区。","项目入围知乎黑客松 S2 全国总决赛。可玩系统还包括门厅、移动端控制、回归测试和沙箱化浏览器体验。"]}
+      ],
+      "methodTitle": "项目背景",
+      "method": "看山是团队项目和黑客松决赛作品，不宣称已经是生产级游戏平台。架构与可玩证据公开在仓库中，故事和平台素材遵循文档记录的权利边界。",
+      "links": [{"label":"GitHub 仓库","href":"https://github.com/er-s-an/kanshanOPENdoor"},{"label":"游戏设计文档","href":"https://github.com/er-s-an/kanshanOPENdoor/blob/codex/initial-upload/GDD.md"},{"label":"当前项目状态","href":"https://github.com/er-s-an/kanshanOPENdoor/blob/codex/initial-upload/STATUS.md"}]
+    }
+  },
+  "rag-anything-ingestion": {
+    "slug": "rag-anything-ingestion",
+    "repository": "https://github.com/HKUDS/RAG-Anything",
+    "image": "/assets/case-studies/rag-ingestion.svg",
+    "en": {
+      "title": "RAG-Anything — Multimodal Ingestion | Jiachen Xie",
+      "description": "Jiachen Xie's merged RAG-Anything PR: reduce multimodal ingestion calls with opt-in packed extraction while preserving resolvable source IDs, deletion, fallback behavior, and legacy graph semantics.",
+      "kicker": "OPEN SOURCE · MULTIMODAL RAG",
+      "headline": "Cutting multimodal ingestion calls without silently changing graph semantics.",
+      "summary": "In HKUDS/RAG-Anything PR #453, I reduced model-call amplification during multimodal document ingestion and worked through maintainer review to protect source resolution, deletion, and failure recovery. The result is an opt-in efficiency path, not a hidden change to default behavior.",
+      "role": "Design, implementation, regression coverage, benchmark, maintainer iteration",
+      "stack": ["Python", "LightRAG", "Multimodal RAG", "pytest", "Ruff"],
+      "imageAlt": "Diagram comparing legacy and packed multimodal ingestion calls",
+      "metrics": [{"value":"65→21","label":"embedding calls on the fixture"},{"value":"6→4","label":"text-model calls on the fixture"},{"value":"1,283","label":"tests passed on the PR head"}],
+      "sections": [
+        {"title":"The problem was amplification, not just latency","paragraphs":["Legacy multimodal ingestion could repeatedly send related content through extraction and embedding calls. Packed extraction groups eligible modal items to reduce that amplification while leaving legacy, per-item, and skip behaviors explicit.","On the public synthetic image-and-two-table fixture, legacy used 65 embedding calls and six text-model calls; packed used 21 and four respectively. Vision-model use remained one call."]},
+        {"title":"Review exposed a deeper graph-lifecycle issue","paragraphs":["An initial reviewer reproduction found that pack IDs used for graph extraction were not consistently resolvable to registered source chunks. That affected graph retrieval and document cleanup, beyond what a call-count benchmark could reveal.","The revision registered packs before extraction, preserved resolvable source IDs through public insertion and deletion, covered failed-batch fallback with real LightRAG stores, and kept legacy extraction as the default."]},
+        {"title":"An upstream change with receipts","paragraphs":["The final PR passed 1,283 tests, Ruff 0.6.4 checks, and Python 3.10–3.12 CI. Live Qwen3-VL and Qwen embedding smoke checks covered insertion, query, public deletion, and all four modes.","The maintainer moved from requesting changes to approving the revised PR, which merged on 12 November 2026. The documentation explicitly records packed-mode retrieval and belongs_to trade-offs."]}
+      ],
+      "methodTitle": "Benchmark scope",
+      "method": "The call-count figures come from one synthetic functional fixture, not a retrieval-quality benchmark. Packed mode is opt-in; representative data should be evaluated before enabling it because it omits belongs_to relations and adds retrieval candidates.",
+      "links": [{"label":"Merged PR #453","href":"https://github.com/HKUDS/RAG-Anything/pull/453"},{"label":"RAG-Anything repository","href":"https://github.com/HKUDS/RAG-Anything"}]
+    },
+    "zh": {
+      "title": "RAG-Anything — 多模态文档摄入优化｜谢佳辰",
+      "description": "谢佳辰已合并的 RAG-Anything PR：通过可选 packed extraction 减少多模态摄入调用，同时保持 source ID 可解析、删除与失败回退行为，并保留默认图语义。",
+      "kicker": "开源工程 · 多模态 RAG",
+      "headline": "减少多模态摄入调用，也不悄悄改变图语义。",
+      "summary": "在 HKUDS/RAG-Anything PR #453 中，我减少了多模态文档摄入时的模型调用放大，并在维护者评审中补齐 source 解析、删除和失败恢复。最终得到的是明确 opt-in 的效率路径，而不是对默认行为的暗改。",
+      "role": "方案设计、实现、回归覆盖、基准样例、维护者迭代",
+      "stack": ["Python", "LightRAG", "多模态 RAG", "pytest", "Ruff"],
+      "imageAlt": "legacy 与 packed 多模态摄入调用对比图",
+      "metrics": [{"value":"65→21","label":"样例 embedding 调用"},{"value":"6→4","label":"样例文本模型调用"},{"value":"1,283","label":"PR 版本通过测试"}],
+      "sections": [
+        {"title":"问题是调用放大，不只是延迟","paragraphs":["Legacy 多模态摄入会对相关内容重复执行抽取与 embedding 调用。Packed extraction 将符合条件的 modal items 分组，减少调用放大，同时保留 legacy、per-item 和 skip 的明确行为。","公开的合成图像加双表格样例中，legacy 使用 65 次 embedding 和 6 次文本模型调用；packed 分别为 21 次和 4 次，视觉模型均为 1 次。"]},
+        {"title":"评审暴露了更深的图生命周期问题","paragraphs":["维护者最初复现发现，用于图抽取的 pack ID 无法稳定解析到已注册 source chunks，影响图检索和文档清理；这不是调用次数基准能覆盖的问题。","修订版在抽取前注册 packs，保证公开插入与删除路径中的 source ID 可解析，使用真实 LightRAG stores 覆盖失败批次回退，并保留 legacy 为默认行为。"]},
+        {"title":"有完整收据的上游改动","paragraphs":["最终 PR 通过 1,283 项测试、Ruff 0.6.4 和 Python 3.10–3.12 CI。Qwen3-VL 与 Qwen embedding 实测覆盖四种模式的插入、查询和公开删除。","维护者从要求修改转为批准，PR 于 2026 年 11 月 12 日合并。文档明确记录 packed 模式的检索候选与 belongs_to 取舍。"]}
+      ],
+      "methodTitle": "基准范围",
+      "method": "调用数字来自一个合成功能样例，不是检索质量基准。Packed 为 opt-in；它会省略 belongs_to 关系并增加检索候选，在真实数据上启用前仍需评估。",
+      "links": [{"label":"已合并 PR #453","href":"https://github.com/HKUDS/RAG-Anything/pull/453"},{"label":"RAG-Anything 仓库","href":"https://github.com/HKUDS/RAG-Anything"}]
+    }
+  }
+}
